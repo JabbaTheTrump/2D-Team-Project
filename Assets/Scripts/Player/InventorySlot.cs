@@ -5,6 +5,12 @@ using Unity.VisualScripting;
 public class InventorySlot
 {
     public ItemData ItemData;
+    public int Index;
+
+    public InventorySlot(int index)
+    {
+        Index = index;
+    }
 
     public bool AddItem(ItemData item) //Changes the item data to the given data, returns whether the change was successful
     {

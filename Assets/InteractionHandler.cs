@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.Pipes;
@@ -20,7 +21,11 @@ public class InteractionHandler : NetworkBehaviour
     [SerializeField] bool _displayHoverGizmo = false;
     [SerializeField] LayerMask _interactionLayer;
     [SerializeField] Camera _camera;
-    [field: SerializeField] public NetworkObject HoveredObject { get; private set; }
+    [field: SerializeField] public GameObject HoveredObject { get; private set; }
+
+    //Events
+    public event Action<GameObject> OnHoverNewObject;
+    public event Action OnHoverStopped;
 
     public override void OnNetworkSpawn()
     {
@@ -49,17 +54,16 @@ public class InteractionHandler : NetworkBehaviour
             Where(col => IsSelectable(col.gameObject)).ToArray();
 
 
-        //Collider2D[] hoveredObjects = Physics2D.OverlapCircleAll(mousePos, _interactionOverlapSize). // Get hovered objects
-        //    Where(collider => collider.gameObject.layer == 6). // That are in the interaction layer
-        //    Where(collider => Vector2.Distance(mousePos, transform.position) <= _interactionRange). // And within interaction range
-        //    ToArray();  
-
         if (hoveredObjects.Length > 0 ) 
         {
-            StartedHovering(hoveredObjects[0].gameObject);
+            if (hoveredObjects[0].transform.root.gameObject != HoveredObject) //Checks if a NEW object is being hovered
+            {
+                StartedHovering(hoveredObjects[0].gameObject);
+            }
+
             //Debug.Log($"Hovering over {HoveredObject}");
         }
-        else
+        else if (HoveredObject != null) 
         {
             StoppedHovering();
         }    
@@ -68,24 +72,26 @@ public class InteractionHandler : NetworkBehaviour
 
     bool IsSelectable(GameObject obj)
     {
-        return obj.gameObject.layer == 6 && Vector2.Distance(obj.transform.position, transform.position) <= _interactionRange;
+        return obj.layer == 6 && Vector2.Distance(obj.transform.position, transform.position) <= _interactionRange;
     }
 
     void StartedHovering(GameObject target)
     {
-        HoveredObject = target.transform.root.GetComponentInChildren<NetworkObject>();
+        HoveredObject = target.transform.root.gameObject;
+        OnHoverNewObject?.Invoke(target);
     }
 
     void StoppedHovering()
     {
         HoveredObject = null;
+        OnHoverStopped?.Invoke();
     }
 
-    void OnInteract()
+    void OnInteract_Press() //Idea - implement the holding interaction on the client side, and only call the "interact" method on the object when interaction is finished
     {
         if (HoveredObject != null)
         {
-            TryToInteractServerRpc(HoveredObject.NetworkObjectId);
+            TryToInteractServerRpc(HoveredObject.GetComponentInChildren<NetworkObject>().NetworkObjectId);
         }
     }
 

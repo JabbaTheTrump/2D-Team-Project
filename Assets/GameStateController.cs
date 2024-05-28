@@ -1,7 +1,9 @@
-﻿using Unity.Netcode;
+﻿using System;
+using Unity.Netcode;
 using Unity.VisualScripting;
+using UnityEngine;
 
-public class GameStateController : NetworkBehaviour
+public class GameStateController : NetworkSingleton<GameStateController>
 {
-    
+
 }

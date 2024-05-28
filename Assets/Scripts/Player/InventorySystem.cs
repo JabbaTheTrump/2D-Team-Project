@@ -46,7 +46,7 @@ public class InventorySystem : NetworkBehaviour
 
         for (int i = 0; i < SlotCount; i++)
         {
-            InventorySlots[i] = new InventorySlot();
+            InventorySlots[i] = new InventorySlot(i);
         }
     }
 
@@ -59,6 +59,16 @@ public class InventorySystem : NetworkBehaviour
         if (firstEmptySlot == null) return false; //Returns if no empty slot was found
 
         return firstEmptySlot.AddItem(item); //Returns whether the item was successfuly added
+    }
+
+    public InventorySlot GetSlotByItemData(ItemData itemData) //Returns the first slot with an identical item data
+    {
+        return InventorySlots.Where(slot => slot.ItemData == itemData).FirstOrDefault();
+    }
+
+    public InventorySlot GetSlotByItemType<T>()
+    {
+        return InventorySlots.Where(slot => typeof(T) == slot.ItemData.GetType()).FirstOrDefault();
     }
 
     public bool TryRemoveItem(int index, bool dropItem)

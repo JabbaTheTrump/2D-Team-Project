@@ -12,6 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15e508603e9e0604f90d146d2a34ee68, type: 3}
   m_Name: GenericRoom
   m_EditorClassIdentifier: 
-  <RoomSize>k__BackingField: {x: 0, y: 0}
-  WallThickness: 1
-  RoomObject: {fileID: 0}
+  RoomObject: {fileID: 9147281006693884238, guid: 20d990f523ffcc3459592543cea33949, type: 3}
