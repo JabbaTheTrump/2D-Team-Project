@@ -25,7 +25,7 @@ public class InventorySystem : NetworkBehaviour
     //Event arguements
     public class OnItemRemovedEventArguements
     {
-        public ItemData ItemData;
+        public Item Item;
         public bool DropItem = false;
     }
 
@@ -51,38 +51,41 @@ public class InventorySystem : NetworkBehaviour
     }
 
 
-    public bool TryPickUpItem(ItemData item)
+    public bool TryPickUpItem(Item item)
     {
         if (item == null) return false; //Returns if the item is null
 
-        InventorySlot firstEmptySlot = InventorySlots.Where(slot => slot.ItemData == null).FirstOrDefault(); //Retrieves the first empty slot in the inventory
+        InventorySlot firstEmptySlot = InventorySlots.Where(slot => slot.Item == null).FirstOrDefault(); //Retrieves the first empty slot in the inventory
         if (firstEmptySlot == null) return false; //Returns if no empty slot was found
 
-        return firstEmptySlot.AddItem(item); //Returns whether the item was successfuly added
+        if (firstEmptySlot.AddItem(item))
+        {
+            OnItemPickedUp?.Invoke(firstEmptySlot.Index);
+            return true;
+        }
+        return false;
     }
 
     public InventorySlot GetSlotByItemData(ItemData itemData) //Returns the first slot with an identical item data
     {
-        return InventorySlots.Where(slot => slot.ItemData == itemData).FirstOrDefault();
+        return InventorySlots.Where(slot => slot.Item != null && slot.Item.ItemData == itemData).FirstOrDefault();
     }
 
-    public InventorySlot GetSlotByItemType<T>()
+    public InventorySlot GetSlotByItemType<T>() where T : ItemData
     {
-        return InventorySlots.Where(slot => typeof(T) == slot.ItemData.GetType()).FirstOrDefault();
+        InventorySlot slot = InventorySlots.
+            Where(slot => slot.Item != null && typeof(T) == (slot.Item.ItemData.GetType())).FirstOrDefault();
+        Debug.Log(slot);
+        return slot;
     }
 
     public bool TryRemoveItem(int index, bool dropItem)
     {
         if (index < 0 || index >= InventorySlots.Length) return false; //Returns false if the slot index is invalid
-        if (InventorySlots[index].ItemData == null) return false; //Returns false if the slot is empty
+        if (InventorySlots[index].Item == null) return false; //Returns false if the slot is empty
 
-        Debug.Log($"Dropping {InventorySlots[index].ItemData}");
+        Debug.Log($"Dropping {InventorySlots[index].Item}");
 
-        OnItemRemoved?.Invoke(new OnItemRemovedEventArguements
-        {
-            ItemData = InventorySlots[index].ItemData,
-            DropItem = dropItem
-        });
 
         if (dropItem) //Drops the item on the server if needed
         {
@@ -94,11 +97,19 @@ public class InventorySystem : NetworkBehaviour
             }
             else
             {
-                droppedItemObject.GetComponent<DroppedItem>().SetData(InventorySlots[index].ItemData); //Updates the dropped item's data
+                droppedItemObject.GetComponent<DroppedItem>().SetItem(InventorySlots[index].Item); //Updates the dropped item's data
             }
         }
 
+        Item itemCopy = InventorySlots[index].Item;
+
         InventorySlots[index].RemoveItem(); //Empties the slot
+
+        OnItemRemoved?.Invoke(new OnItemRemovedEventArguements
+        {
+            Item = itemCopy,
+            DropItem = dropItem
+        });
 
         return true;
     }

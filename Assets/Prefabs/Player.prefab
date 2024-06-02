@@ -218,7 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1179265809
+  GlobalObjectIdHash: 2927097167
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -239,7 +239,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9eaeb3d6c2ac0a8468c24b5a704b5c2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementHandler: {fileID: 251128976790994558}
+  _movementHandler: {fileID: 251128976790994558}
+  SprintKeyPressed: 0
+  SprintAction:
+    m_Name: 
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 220d7bda-a374-4698-8d1f-758cf532db0d
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  WalkAction:
+    m_Name: 
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 5189436d-962f-4f12-bd32-28f64e140a40
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
 --- !u!114 &251128976790994558
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,9 +271,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f37828387e079a64bbf63613c344e8b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _walkSpeed: 300
+  _sprintSpeed: 500
+  <MaxStamina>k__BackingField: 100
+  <CurrentStamina>k__BackingField: 100
+  <StaminaDrainRate>k__BackingField: 50
+  <StaminaRecoveryRate>k__BackingField: 15
+  <StaminaSprintThreshold>k__BackingField: 20
+  _rb2d: {fileID: 8955925047277001623}
+  _inputController: {fileID: 6464352726500142779}
+  IsRunning: 0
   moveDir: {x: 0, y: 0}
-  walkSpeed: 100
-  rb2d: {fileID: 8955925047277001623}
 --- !u!114 &4096297310229492389
 MonoBehaviour:
   m_ObjectHideFlags: 0

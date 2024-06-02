@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3411859490850858258, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 1727607857
+      value: 1316267925
       objectReference: {fileID: 0}
     - target: {fileID: 4205743016145798468, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_Name
@@ -82,4 +82,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36417d15ae990dd48bcef6962cab98e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _harvesterItemData: {fileID: 11400000, guid: 5331292bac1614542861faf642903339, type: 2}
+  <Sample>k__BackingField: {fileID: 4644103396090009018, guid: 543f23a7c73437d45a476f0de40f2cd1, type: 3}
+  _harvesterPrefab: {fileID: 3539590519193452685, guid: 79432fdebcb4ba845b16bdc7e549a91b, type: 3}

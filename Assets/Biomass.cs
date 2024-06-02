@@ -7,8 +7,9 @@ using UnityEngine;
 public class Biomass : NetworkBehaviour, IInteractable
 {
     [field: SerializeField] public Item Sample { get; set; }
+    public NetworkVariable<bool> IsInteractable { get; set; } = new(true);
 
-    NetworkVariable<bool> _harvestable = new(true);
+    [SerializeField] GameObject _harvesterPrefab;
 
     public void Interact(NetworkObject interactor)
     {
@@ -17,23 +18,34 @@ public class Biomass : NetworkBehaviour, IInteractable
         InventorySlot harvesterSlot = inventory.GetSlotByItemType<HarvesterItemData>();
 
         if (harvesterSlot == null) return; //Returns if the player doesn't have a harvester
+        //Debug.Log("Harvester detected in inventory");
 
-        if (inventory.TryRemoveItem(harvesterSlot.Index, false)) 
-        {
-            //SetUpHarvester();
-        }
+        SetUpHarvester(harvesterSlot.Item.ItemData as HarvesterItemData);
+
+        inventory.TryRemoveItem(harvesterSlot.Index, false);
     }
 
-    void SetUpHarvester(HarvesterItemData harvester) //Spawns the harvester
+    void SetUpHarvester(HarvesterItemData harvesterData) //Spawns the harvester and initializes it
     {
-        if (!_harvestable.Value)
+        if (harvesterData == null)
         {
-            Debug.LogWarning($"Attempted to place a harvester on a node marked as unharvestable {gameObject}");
+            Debug.LogWarning("Attempted to plaec a harvester without harvester data");
+            return;
+        }
+        //Debug.Log("Settings up harvester");
+
+        NetworkObject placedHarvester = NetworkSpawnManager.Instance.SpawnPrefabOnNetwork(_harvesterPrefab, transform.position);
+        BiomassHarvester harvesterController = placedHarvester.GetComponentInChildren<BiomassHarvester>();
+
+        if (harvesterController == null)
+        {
+            Debug.LogWarning("A placed harvester does not contain a controller");
+            placedHarvester.Despawn();
             return;
         }
 
-        _harvestable.Value = false;
+        IsInteractable.Value = false;
 
-        
+        harvesterController.StartHarvester(this, harvesterData);
     }
 }

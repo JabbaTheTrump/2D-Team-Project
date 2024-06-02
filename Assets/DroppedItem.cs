@@ -6,19 +6,21 @@ using UnityEngine;
 public class DroppedItem : NetworkBehaviour, IInteractable
 {
     //Fields
-    [SerializeField] ItemData _data;
+    [SerializeField] Item _item;
 
     //Serialized References
     [SerializeField] SpriteRenderer _spriteRenderer;
 
-    public void SetData(ItemData data)
+    public NetworkVariable<bool> IsInteractable { get; set; } = new(true);
+
+    public void SetItem(Item item)
     {
-        gameObject.name = $"DroppedItem[{_data.Name}]";
-        _data = data;
+        _item = item;
+        gameObject.name = $"DroppedItem[{_item.ItemData.Name}]";
         
-        if (_data.ItemSprite != null )
+        if (_item.ItemData.ItemSprite != null )
         {
-            _spriteRenderer.sprite = _data.ItemSprite;
+            _spriteRenderer.sprite = _item.ItemData.ItemSprite;
         }
     }
 
@@ -31,7 +33,7 @@ public class DroppedItem : NetworkBehaviour, IInteractable
             return;
         }
 
-        if (!inventorySystem.TryPickUpItem(_data)) //Tries to pick up the item and exists method if attempt failed
+        if (!inventorySystem.TryPickUpItem(_item)) //Tries to pick up the item and exists method if attempt failed
         {
             return;
         }

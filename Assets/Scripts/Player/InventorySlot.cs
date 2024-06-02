@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 [System.Serializable]
 public class InventorySlot
 {
-    public ItemData ItemData;
+    public Item Item;
     public int Index;
 
     public InventorySlot(int index)
@@ -12,19 +12,19 @@ public class InventorySlot
         Index = index;
     }
 
-    public bool AddItem(ItemData item) //Changes the item data to the given data, returns whether the change was successful
+    public bool AddItem(Item item) //Changes the item data to the given data, returns whether the change was successful
     {
-        if (ItemData != null) return false;
+        if (Item != null) return false;
 
-        ItemData = item;
+        Item = item;
         return true;
     }
 
     public bool RemoveItem() //Removes the item data, returns whether there was an item to remove
     {
-        if (ItemData == null) return false;
+        if (Item == null) return false;
 
-        ItemData = null;
+        Item = null;
         return true;
     }
 }

@@ -14,7 +14,13 @@ public class PlayerSpawnController : NetworkBehaviour
 
         if (IsLocalPlayer)
         {
-            OnLocalPlayerSpawn?.Invoke(gameObject);
+            StartCoroutine(EventFireTest());
         }
+    }
+
+    IEnumerator EventFireTest()
+    {
+        yield return null;
+        OnLocalPlayerSpawn?.Invoke(gameObject);
     }
 }

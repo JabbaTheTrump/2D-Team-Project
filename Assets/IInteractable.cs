@@ -3,6 +3,7 @@ using UnityEngine;
 
 public interface IInteractable
 {
+    public NetworkVariable<bool> IsInteractable { get; set; }
     public void Interact(NetworkObject interactor);
 }
 

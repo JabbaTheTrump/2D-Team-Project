@@ -31,13 +31,11 @@ public class CursorSpriteManager : Singleton<CursorSpriteManager>
 
     void StartedHoveringObject()
     {
-        Debug.Log("Started Hovering");
         Cursor.SetCursor(_interactTexture, Vector2.zero, CursorMode.Auto);
     }
 
     void StoppedHoveringObject()
     {
-        Debug.Log("Stopped Hovering");
         Cursor.SetCursor(_baseTexture, Vector2.zero, CursorMode.Auto);
     }
 }

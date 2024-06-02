@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class BiomassHarvester : NetworkBehaviour, IInteractable
 {
-    NetworkVariable<bool> _finished = new(false); //Whether the harvester finished harvesting
-    NetworkVariable<bool> _containsResource = new(true); //Whether the item were picked up from the harvester
     Biomass _biomassNode;
 
     HarvesterItemData _harvesterData;
+
+    public NetworkVariable<bool> IsInteractable { get; set; } = new(false); //Set to Whether the harvester finished harvesting
 
     public void StartHarvester(Biomass mass, HarvesterItemData harvesterData)
     {
@@ -20,17 +20,22 @@ public class BiomassHarvester : NetworkBehaviour, IInteractable
 
     public void Interact(NetworkObject interactor)
     {
-        if (!_finished.Value || !_containsResource.Value) return;
+        if (!IsInteractable.Value) return;
 
-        if (interactor.GetComponentInChildren<InventorySystem>().TryPickUpItem(_biomassNode.Sample.ItemData))
+        if (interactor.GetComponentInChildren<InventorySystem>().TryPickUpItem(_biomassNode.Sample))
         {
-            _containsResource.Value = false;
+            IsInteractable.Value = false;
         }
     }
 
     IEnumerator StartHarvester()
     {
+        Debug.Log("Starting Harvester");
+
         yield return new WaitForSeconds(_harvesterData.HarvestTime);
-        _finished.Value = true;
+
+        Debug.Log("Harvester Finished");
+
+        IsInteractable.Value = true;
     }
 }

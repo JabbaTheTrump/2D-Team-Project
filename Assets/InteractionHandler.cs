@@ -56,12 +56,20 @@ public class InteractionHandler : NetworkBehaviour
 
         if (hoveredObjects.Length > 0 ) 
         {
-            if (hoveredObjects[0].transform.root.gameObject != HoveredObject) //Checks if a NEW object is being hovered
+            foreach (var obj in hoveredObjects)
             {
-                StartedHovering(hoveredObjects[0].gameObject);
-            }
+                GameObject objRoot = obj.transform.root.gameObject;
 
-            //Debug.Log($"Hovering over {HoveredObject}");
+                if (objRoot != HoveredObject) //Checks if a NEW object is being hovered
+                {
+                    if (objRoot.GetComponentInChildren<IInteractable>().IsInteractable.Value) //Checks if the object is set to be interactable;
+                    {
+                        StartedHovering(objRoot.gameObject);
+                    }
+                }
+
+                //Debug.Log($"Hovering over {HoveredObject}");
+            }
         }
         else if (HoveredObject != null) 
         {
@@ -72,7 +80,8 @@ public class InteractionHandler : NetworkBehaviour
 
     bool IsSelectable(GameObject obj)
     {
-        return obj.layer == 6 && Vector2.Distance(obj.transform.position, transform.position) <= _interactionRange;
+        return obj.layer == 6 && 
+            Vector2.Distance(obj.transform.position, transform.position) <= _interactionRange;
     }
 
     void StartedHovering(GameObject target)
