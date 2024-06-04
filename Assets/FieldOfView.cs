@@ -19,12 +19,12 @@ public class FieldOfView : MonoBehaviour
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        //PlayerSpawner.Instance.OnLocalPlayerSpawn += SetLocalPlayer;
+        PlayerSpawnController.OnLocalPlayerSpawn += SetPlayer;
     }
 
-    void SetLocalPlayer(NetworkObject localPlayerObject)
+    void SetPlayer(GameObject playerObject)
     {
-        originPoint = localPlayerObject.transform;
+        originPoint = playerObject.transform;
         //localPlayerObject.GetComponent<PlayerController>().OnPlayerDeath += _ => PlayerDied();
         //FindObjectOfType<VirtualCameraHandler>().OnFollowTargetChanged += ChangeOriginPoint;
     }

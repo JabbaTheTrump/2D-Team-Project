@@ -12,9 +12,9 @@ TagManager:
   - Water
   - UI
   - Interactable
-  - FOVBlocker
-  - 
-  - 
+  - FOV
+  - TallObjects
+  - Darkness
   - 
   - 
   - 

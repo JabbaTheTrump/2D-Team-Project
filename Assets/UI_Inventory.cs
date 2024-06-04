@@ -37,7 +37,6 @@ public class UI_Inventory : MonoBehaviour
 
     void GenerateInventorySlots() //Creates a UI slot for each inventory slot 
     {
-        Debug.Log(_inventory.InventorySlots.Length);
         foreach (Transform child in transform)
         {
             Destroy(child.gameObject);
