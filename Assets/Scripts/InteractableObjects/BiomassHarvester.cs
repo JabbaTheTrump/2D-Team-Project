@@ -9,6 +9,9 @@ public class BiomassHarvester : NetworkBehaviour, IInteractable
 
     HarvesterItemData _harvesterData;
 
+    //AudioClip _drillingAudioClip;
+    //AudioClip _finishAudioClip;
+
     public NetworkVariable<bool> IsInteractable { get; set; } = new(false); //Set to Whether the harvester finished harvesting
 
     public void StartHarvester(Biomass mass, HarvesterItemData harvesterData)
@@ -20,8 +23,6 @@ public class BiomassHarvester : NetworkBehaviour, IInteractable
 
     public void Interact(NetworkObject interactor)
     {
-        if (!IsInteractable.Value) return;
-
         if (interactor.GetComponentInChildren<InventorySystem>().TryPickUpItem(_biomassNode.Sample))
         {
             IsInteractable.Value = false;
@@ -30,11 +31,7 @@ public class BiomassHarvester : NetworkBehaviour, IInteractable
 
     IEnumerator StartHarvester()
     {
-        Debug.Log("Starting Harvester");
-
         yield return new WaitForSeconds(_harvesterData.HarvestTime);
-
-        Debug.Log("Harvester Finished");
 
         IsInteractable.Value = true;
     }

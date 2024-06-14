@@ -50,11 +50,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3411859490850858258, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2745575450
+      value: 2470444534
       objectReference: {fileID: 0}
     - target: {fileID: 4205743016145798468, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_Name
       value: BiomassCollector
+      objectReference: {fileID: 0}
+    - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 133cca5e37430104fbcddf17f38d62b6, type: 3}
+    - target: {fileID: 6804194220922223298, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_Size.x
+      value: 1.7881457
+      objectReference: {fileID: 0}
+    - target: {fileID: 6804194220922223298, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_Size.y
+      value: 1.2046566
+      objectReference: {fileID: 0}
+    - target: {fileID: 6804194220922223298, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.0021771789
+      objectReference: {fileID: 0}
+    - target: {fileID: 6804194220922223298, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.1023283
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2868858227576706891, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
@@ -64,6 +84,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4205743016145798468, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8743901816719858000}
+    - targetCorrespondingSourceObject: {fileID: 6573190443134492327, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7128002581110766790}
   m_SourcePrefab: {fileID: 100100000, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
 --- !u!1 &569508121237920397 stripped
 GameObject:
@@ -83,3 +106,53 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sampleItemData: {fileID: 11400000, guid: 5331292bac1614542861faf642903339, type: 2}
+--- !u!1 &7386511980097651054 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6573190443134492327, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+  m_PrefabInstance: {fileID: 4448008744988925897}
+  m_PrefabAsset: {fileID: 0}
+--- !u!61 &7128002581110766790
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7386511980097651054}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.18723899}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.81, y: 1.437}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.81, y: 1.062522}
+  m_EdgeRadius: 0

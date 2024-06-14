@@ -19,7 +19,7 @@ public class FieldOfView : MonoBehaviour
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        PlayerSpawnController.OnLocalPlayerSpawn += SetPlayer;
+        LocalPlayerSpawnController.Instance.OnLocalPlayerSpawn += SetPlayer;
     }
 
     void SetPlayer(GameObject playerObject)
@@ -29,22 +29,22 @@ public class FieldOfView : MonoBehaviour
         //FindObjectOfType<VirtualCameraHandler>().OnFollowTargetChanged += ChangeOriginPoint;
     }
 
-    void PlayerDied()
-    {
-        if (fov != 360)
-        {
-            GetComponent<MeshRenderer>().enabled = false;
-            enabled = false;
-        }
+    //void PlayerDied()
+    //{
+    //    if (fov != 360)
+    //    {
+    //        GetComponent<MeshRenderer>().enabled = false;
+    //        enabled = false;
+    //    }
 
-        rayCount = 300;
-        viewDistance = 10;
-    }
+    //    rayCount = 300;
+    //    viewDistance = 10;
+    //}
   
-    void ChangeOriginPoint(Transform point)
-    {
-        originPoint = point;
-    }
+    //void ChangeOriginPoint(Transform point)
+    //{
+    //    originPoint = point;
+    //}
 
     private void FixedUpdate()
     {

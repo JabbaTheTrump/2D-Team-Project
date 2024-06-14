@@ -54,23 +54,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4205743016145798468, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_Name
-      value: PlacedHarvester 1
+      value: PlacedHarvester
       objectReference: {fileID: 0}
     - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_Size.x
+      value: 1.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_Size.y
+      value: 1.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f54c57b0d4cb5e64b9cd00437059f843, type: 3}
+    - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_Color.b
-      value: 0.7977483
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_Color.g
-      value: 0.7977483
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_Color.r
-      value: 0.8584906
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7542353466722716133, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.7375
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2868858227576706891, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}

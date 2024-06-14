@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using Unity.Netcode;
 using UnityEngine;
 
-public class NetworkSpawnManager : NetworkSingleton<NetworkSpawnManager>
+public class NetworkSpawnManager : ServerSingleton<NetworkSpawnManager>
 {
     public NetworkObject SpawnPrefabOnNetwork(GameObject prefab, Vector2 position)
     {

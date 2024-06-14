@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class MovementHandler : NetworkBehaviour
+public class PlayerMovementHandler : NetworkBehaviour
 {
     [Header("Parameters")]
     [SerializeField] float _walkSpeed = 300;
@@ -18,6 +18,7 @@ public class MovementHandler : NetworkBehaviour
     [field: SerializeField] public float StaminaDrainRate { get; private set; } = 20;
     [field: SerializeField] public float StaminaRecoveryRate { get; private set; } = 15;
     [field: SerializeField] public float StaminaSprintThreshold { get; private set; } = 20; //The minimum stamina required to start a sprint
+    [field: SerializeField] public float RecoveryPeriod { get; private set; } = 2;
 
     [Header("Serialized References")]
     [SerializeField] Rigidbody2D _rb2d;
@@ -25,12 +26,14 @@ public class MovementHandler : NetworkBehaviour
 
     [Header("Debug")]
     public bool IsRunning = false;
+    public bool IsRecoveringFromSprint = false;
 
     //unserialized fields
     [HideInInspector] public Vector2 moveDir;
 
     //Events
     public event Action<bool> OnSprintStateChanged;
+    public event Action<float> OnStaminaChanged;
 
     public override void OnNetworkSpawn()
     {
@@ -69,11 +72,13 @@ public class MovementHandler : NetworkBehaviour
         {
             CurrentStamina -= StaminaDrainRate * Time.deltaTime;
             if (0 > CurrentStamina) CurrentStamina = 0;
+            OnStaminaChanged?.Invoke(CurrentStamina);
         }
-        else if (MaxStamina > CurrentStamina)
+        else if (MaxStamina > CurrentStamina && !IsRecoveringFromSprint)
         {
             CurrentStamina += StaminaRecoveryRate * Time.deltaTime;
             if (CurrentStamina > MaxStamina) CurrentStamina = MaxStamina;
+            OnStaminaChanged?.Invoke(CurrentStamina);
         }
     }
 
@@ -81,18 +86,28 @@ public class MovementHandler : NetworkBehaviour
     {
         if (StaminaSprintThreshold > CurrentStamina) return; //Returns if there isn't enough stamina to start a sprint
 
-        Debug.Log("Started sprinting");
+        //Debug.Log("Started sprinting");
         IsRunning = true;
         OnSprintStateChanged?.Invoke(IsRunning);
     }
 
     void StopSprinting()
     {
-        if (IsRunning)
-        {
-            Debug.Log("Stopped sprinting");
-            IsRunning = false;
-            OnSprintStateChanged?.Invoke(IsRunning);
-        }
+        if (!IsRunning) return;
+
+        //Debug.Log("Stopped sprinting");
+        IsRunning = false;
+        OnSprintStateChanged?.Invoke(IsRunning);
+
+        StartCoroutine(StartSprintRecoveryPeriod());
+    }
+
+    IEnumerator StartSprintRecoveryPeriod()
+    {
+        IsRecoveringFromSprint = true;
+
+        yield return new WaitForSeconds(RecoveryPeriod);
+
+        IsRecoveringFromSprint = false;
     }
 }

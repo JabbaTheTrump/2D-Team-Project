@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputController : NetworkBehaviour
 {
-    [SerializeField] MovementHandler _movementHandler;
+    [SerializeField] PlayerMovementHandler _movementHandler;
 
     InventorySystem _inventory;
 
@@ -19,6 +19,11 @@ public class PlayerInputController : NetworkBehaviour
     private void Start()
     {
         _inventory = GetComponentInChildren<InventorySystem>();
+
+        if (IsLocalPlayer)
+        {
+            StartCoroutine(LocalPlayerSpawnController.Instance.InvokeLocalPlayerEventNextFrame(gameObject));
+        }
     }
 
     public override void OnNetworkSpawn()

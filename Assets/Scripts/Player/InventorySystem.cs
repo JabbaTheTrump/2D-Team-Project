@@ -9,7 +9,7 @@ using UnityEngine;
 public class InventorySystem : NetworkBehaviour
 {
     [Header("Properties")]
-    [SerializeField] int SlotCount = 4;
+    [SerializeField] public readonly int SlotCount = 4;
 
     [Header("Exposed Fields")]
     public InventorySlot[] InventorySlots;
@@ -20,14 +20,8 @@ public class InventorySystem : NetworkBehaviour
 
     //Events
     public event Action<int> OnItemPickedUp;
-    public event Action<OnItemRemovedEventArguements> OnItemRemoved;
-
-    //Event arguements
-    public class OnItemRemovedEventArguements
-    {
-        public Item Item;
-        public bool DropItem = false;
-    }
+    public event Action OnItemRemoved;
+    public event Action<int> OnNewSlotSelected;
 
     private void Start()
     {
@@ -37,7 +31,7 @@ public class InventorySystem : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        enabled = IsServer;
+        enabled = IsServer || IsOwner;
     }
 
     private void InitializeInventorySlots()
@@ -61,6 +55,7 @@ public class InventorySystem : NetworkBehaviour
         if (firstEmptySlot.AddItem(item))
         {
             OnItemPickedUp?.Invoke(firstEmptySlot.Index);
+            SyncItemAddedClientRpc(firstEmptySlot.Index, item.ItemData.Id);
             return true;
         }
         return false;
@@ -79,38 +74,75 @@ public class InventorySystem : NetworkBehaviour
         return slot;
     }
 
-    public bool TryRemoveItem(int index, bool dropItem)
+    public bool TryRemoveItem(int slotIndex, bool dropItem)
     {
-        if (index < 0 || index >= InventorySlots.Length) return false; //Returns false if the slot index is invalid
-        if (InventorySlots[index].Item == null) return false; //Returns false if the slot is empty
+        if (slotIndex < 0 || slotIndex >= InventorySlots.Length) return false; //Returns false if the slot index is invalid
+        if (InventorySlots[slotIndex].Item == null) return false; //Returns false if the slot is empty
 
-        Debug.Log($"Dropping {InventorySlots[index].Item}");
+        Debug.Log($"Dropping {InventorySlots[slotIndex].Item}");
 
 
         if (dropItem) //Drops the item on the server if needed
         {
-            NetworkObject droppedItemObject = NetworkSpawnManager.Instance.SpawnPrefabOnNetwork(_droppedItemPrefab, transform.position);
-
-            if (droppedItemObject == null)
-            {
-                Debug.LogWarning($"Dropped item in slot {index} failed to spawn!");
-            }
-            else
-            {
-                droppedItemObject.GetComponent<DroppedItem>().SetItem(InventorySlots[index].Item); //Updates the dropped item's data
-            }
+            SpawnDroppedItem(slotIndex);
         }
 
-        Item itemCopy = InventorySlots[index].Item;
+        Item itemCopy = InventorySlots[slotIndex].Item;
 
-        InventorySlots[index].RemoveItem(); //Empties the slot
+        InventorySlots[slotIndex].RemoveItem(); //Empties the slot
 
-        OnItemRemoved?.Invoke(new OnItemRemovedEventArguements
-        {
-            Item = itemCopy,
-            DropItem = dropItem
-        });
+        OnItemRemoved?.Invoke();
+        SyncItemRemovedClientRpc(slotIndex);
 
         return true;
     }
+
+    void SpawnDroppedItem(int slotIndex)
+    {
+        NetworkObject droppedItemObject = NetworkSpawnManager.Instance.SpawnPrefabOnNetwork(_droppedItemPrefab, transform.position);
+
+        if (droppedItemObject == null)
+        {
+            Debug.LogWarning($"Dropped item in slot {slotIndex} failed to spawn!");
+        }
+        else
+        {
+            droppedItemObject.GetComponent<DroppedItem>().SetItem(InventorySlots[slotIndex].Item); //Updates the dropped item's data
+        }
+    }
+
+    public void SelectSlot(int slotIndex)
+    {
+        if (SelectedSlot == slotIndex) return;
+
+        SelectedSlot = slotIndex;
+        OnNewSlotSelected?.Invoke(slotIndex);
+    }
+
+    [ClientRpc]
+    void SyncItemAddedClientRpc(int slotIndex, int itemId)
+    {
+        if (IsServer) return;
+
+        Item item = ItemDictionary.Instance.GetItemById(itemId);
+
+        if (item == null)
+        {
+            Debug.LogWarning($"A client has not registered an item with it's ID correctly! ID:{itemId}");
+            return;
+        }
+
+        InventorySlots[slotIndex].Item = item;
+        OnItemPickedUp?.Invoke(slotIndex);
+    }
+
+    [ClientRpc]
+    void SyncItemRemovedClientRpc(int slotIndex)
+    {
+        if (IsServer) return;
+
+        InventorySlots[slotIndex].RemoveItem();
+        OnItemRemoved?.Invoke();
+    }
+
 }

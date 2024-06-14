@@ -1,31 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ItemDictionary : Singleton<ItemDictionary>
 {
-    [SerializeField] List<Item> _inGameItems;
-    Dictionary<int, Item> _itemIdDictionary = new Dictionary<int, Item>();
+    [SerializeField] List<Item> _itemDataList;
 
-    // Start is called before the first frame update
-    void Start()
+
+    private void Start()
     {
+        LoadAllItemData();
         AssignIds();
     }
 
-    void AssignIds()
+    void LoadAllItemData() //Loads all the items into a list from the client
     {
-        foreach (var item in _inGameItems)
+        List<Item> itemDataList = Resources.LoadAll<Item>("Items").ToList();
+        //Debug.Log($"Item Dictionary has loaded a total of {itemDataList.Count} items!");
+
+        _itemDataList = itemDataList;
+    }
+
+    void AssignIds() //Pairs IDs with Items on the server
+    {
+        for (int i = 0; i < _itemDataList.Count; i++)
         {
-            int id = _itemIdDictionary.Count; //Sets the ID to the current amount of items in the dictionary
-            _itemIdDictionary.Add(id, item);
-            item.ItemData.SetId(id);
+            _itemDataList[i].ItemData.SetId(i);
+            //Debug.Log($"Paired ID: {i}, {_itemDataList[i]}");
         }
     }
 
     public Item GetItemById(int id)
     {
-        return _itemIdDictionary[id];
+        return _itemDataList
+            .Where(item => item.ItemData.Id == id)
+            .SingleOrDefault();
     }
 }

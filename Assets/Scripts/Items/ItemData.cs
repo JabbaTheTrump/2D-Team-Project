@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
 
 [CreateAssetMenu(menuName = "ItemData/Generic")]
 public class ItemData : ScriptableObject

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
 
 public class Singleton<T> : MonoBehaviour where T : Singleton<T>
 {
@@ -8,6 +9,8 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T>
     {
         if (Instance != null && Instance != this)
         {
+            Debug.LogWarning($"Detected duplicate singleton script of type {Instance}!");
+            Debug.LogWarning($"Roots: {transform.root},  {Instance.transform.root}");
             Destroy(this);
         }
         else
@@ -17,8 +20,26 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T>
     }
 }
 
+public class NetworkSingleton<T> : NetworkBehaviour where T : NetworkSingleton<T>
+{
+    public static T Instance;
 
-public class NetworkSingleton<T> : ServerSideNetworkedBehaviour where T : NetworkSingleton<T>
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning($"Detected duplicate singleton script of type {Instance}!");
+            Debug.LogWarning($"Roots: {transform.root},  {Instance.transform.root}");
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this as T;
+        }
+    }
+}
+
+public class ServerSingleton<T> : ServerSideNetworkedBehaviour where T : ServerSingleton<T>
 {
     public static T Instance;
 
