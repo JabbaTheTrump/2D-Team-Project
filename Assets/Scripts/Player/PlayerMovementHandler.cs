@@ -7,7 +7,14 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMovementHandler : NetworkBehaviour
+public enum MovementState
+{
+    Idle,
+    Walking,
+    Sprinting
+}
+
+public class PlayerMovementHandler : ServerSideNetworkedBehaviour
 {
     [Header("Parameters")]
     [SerializeField] float _walkSpeed = 300;
@@ -25,14 +32,14 @@ public class PlayerMovementHandler : NetworkBehaviour
     [SerializeField] PlayerInputController _inputController;
 
     [Header("Debug")]
-    public bool IsRunning = false;
+    public ObservableVariable<MovementState> CurrentMovementState = new(MovementState.Idle);
+
     public bool IsRecoveringFromSprint = false;
 
     //unserialized fields
     [HideInInspector] public Vector2 moveDir;
 
     //Events
-    public event Action<bool> OnSprintStateChanged;
     public event Action<float> OnStaminaChanged;
 
     public override void OnNetworkSpawn()
@@ -50,7 +57,9 @@ public class PlayerMovementHandler : NetworkBehaviour
     {
         float moveSpeed = _walkSpeed;
 
-        if (IsRunning)
+        if (moveDir == Vector2.zero) CurrentMovementState.Value = MovementState.Idle; //If the player isn't pressing the WASD keys, consider him idle
+        else if (CurrentMovementState.Value != MovementState.Sprinting) CurrentMovementState.Value = MovementState.Walking; //If the player is pressing the WASD keys but isn't running, consider him walking
+        else //If the player is sprinting 
         {
             if (0 >= CurrentStamina)
             {
@@ -68,16 +77,22 @@ public class PlayerMovementHandler : NetworkBehaviour
 
     void UpdateStamina()
     {
-        if (IsRunning)
+        float previousStamina = CurrentStamina;
+
+        if (CurrentMovementState.Value == MovementState.Sprinting) //Drains stamina if the player is sprinting
         {
-            CurrentStamina -= StaminaDrainRate * Time.deltaTime;
-            if (0 > CurrentStamina) CurrentStamina = 0;
-            OnStaminaChanged?.Invoke(CurrentStamina);
+            CurrentStamina -= StaminaDrainRate * Time.deltaTime; //Reduce stamina
+
+            if (0 > CurrentStamina) CurrentStamina = 0; //Set it to zero if it is negative
         }
-        else if (MaxStamina > CurrentStamina && !IsRecoveringFromSprint)
+        else if (MaxStamina > CurrentStamina && !IsRecoveringFromSprint) //Recovers stamina if the player isn't sprinting 
         {
             CurrentStamina += StaminaRecoveryRate * Time.deltaTime;
             if (CurrentStamina > MaxStamina) CurrentStamina = MaxStamina;
+        }
+
+        if (previousStamina != CurrentStamina)
+        {
             OnStaminaChanged?.Invoke(CurrentStamina);
         }
     }
@@ -85,24 +100,21 @@ public class PlayerMovementHandler : NetworkBehaviour
     void StartSprinting()
     {
         if (StaminaSprintThreshold > CurrentStamina) return; //Returns if there isn't enough stamina to start a sprint
-
+        CurrentMovementState.Value = MovementState.Sprinting;
         //Debug.Log("Started sprinting");
-        IsRunning = true;
-        OnSprintStateChanged?.Invoke(IsRunning);
     }
 
     void StopSprinting()
     {
-        if (!IsRunning) return;
+        if (CurrentMovementState.Value != MovementState.Sprinting) return; //Return if the player isn't currently sprinting
+        CurrentMovementState.Value = MovementState.Idle;
 
         //Debug.Log("Stopped sprinting");
-        IsRunning = false;
-        OnSprintStateChanged?.Invoke(IsRunning);
 
         StartCoroutine(StartSprintRecoveryPeriod());
     }
 
-    IEnumerator StartSprintRecoveryPeriod()
+    IEnumerator StartSprintRecoveryPeriod() //Stops the player from recovering stamina for a duration after a sprint is stopped
     {
         IsRecoveringFromSprint = true;
 
