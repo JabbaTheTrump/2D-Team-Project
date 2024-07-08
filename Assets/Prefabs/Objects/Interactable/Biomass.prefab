@@ -10,11 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1813167248678233794, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -5.01
       objectReference: {fileID: 0}
     - target: {fileID: 1813167248678233794, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1813167248678233794, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_LocalPosition.z
@@ -22,19 +22,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1813167248678233794, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.0719402
       objectReference: {fileID: 0}
     - target: {fileID: 1813167248678233794, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1813167248678233794, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1813167248678233794, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.9974089
       objectReference: {fileID: 0}
     - target: {fileID: 1813167248678233794, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -46,15 +46,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1813167248678233794, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -171.749
       objectReference: {fileID: 0}
     - target: {fileID: 3411859490850858258, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: GlobalObjectIdHash
+      value: 979273063
+      objectReference: {fileID: 0}
+    - target: {fileID: 3411859490850858258, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
       value: 1316267925
       objectReference: {fileID: 0}
     - target: {fileID: 4205743016145798468, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
       propertyPath: m_Name
       value: Biomass
+      objectReference: {fileID: 0}
+    - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e3032c85aed2c6c40a94f04e3d566685, type: 3}
+    - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_Color.b
+      value: 0.614348
+      objectReference: {fileID: 0}
+    - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6886792
+      objectReference: {fileID: 0}
+    - target: {fileID: 5519255812237138425, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}
+      propertyPath: m_Color.r
+      value: 0.5944731
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2868858227576706891, guid: ddc852b9202304b409ea6af87d6d10ab, type: 3}

@@ -45,9 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e937e3b909df35745a0388c69fe007d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _footstepsAudioSource: {fileID: 1056958947390172264}
-  _walkAudioClip: {fileID: 8300000, guid: 33992240fae21ac4db98ec5499094918, type: 3}
-  _sprintAudioClip: {fileID: 8300000, guid: 6ff1e35c9e3cac24491b9eb4240c7807, type: 3}
 --- !u!1 &1721296504278615582
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,6 +168,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2718425190678254949}
+  - component: {fileID: 929477517500465872}
   - component: {fileID: 1056958947390172264}
   m_Layer: 0
   m_Name: Footsteps
@@ -194,6 +192,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5218796788938712844}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &929477517500465872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5063205345660028126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbdae3826ea588643a0d844e02814e47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _movementHandler: {fileID: 251128976790994558}
+  _movementAudioSource: {fileID: 1056958947390172264}
 --- !u!82 &1056958947390172264
 AudioSource:
   m_ObjectHideFlags: 0
@@ -208,7 +220,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -393,7 +405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1179265809
+  GlobalObjectIdHash: 2927097167
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -445,8 +457,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f37828387e079a64bbf63613c344e8b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _walkSpeed: 150
-  _sprintSpeed: 250
+  MovementTypes:
+  - State: 0
+    Velocity: 0
+    MovementStateAudio: {fileID: 0}
+    AnimationTriggerName: 
+  - State: 1
+    Velocity: 150
+    MovementStateAudio: {fileID: 8300000, guid: da9333cc00506284380d38b783e8bc3e, type: 3}
+    AnimationTriggerName: 
+  - State: 2
+    Velocity: 250
+    MovementStateAudio: {fileID: 8300000, guid: 50b4484361ed87b48b716a7389b7fb6f, type: 3}
+    AnimationTriggerName: 
+  <CurrentMovementState>k__BackingField:
+    _value: 0
   <MaxStamina>k__BackingField: 100
   <CurrentStamina>k__BackingField: 100
   <StaminaDrainRate>k__BackingField: 15
@@ -455,8 +480,6 @@ MonoBehaviour:
   <RecoveryPeriod>k__BackingField: 2
   _rb2d: {fileID: 8955925047277001623}
   _inputController: {fileID: 6464352726500142779}
-  CurrentMovementState:
-    _value: 0
   IsRecoveringFromSprint: 0
   moveDir: {x: 0, y: 0}
 --- !u!114 &4096297310229492389

@@ -4,6 +4,8 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 using QFSW.QC;
+using System;
+using Random = UnityEngine.Random;
 
 
 public class WalkerAI : NetworkBehaviour
@@ -21,7 +23,8 @@ public class WalkerAI : NetworkBehaviour
         Investigate
     }
 
-    public State CurrentState = State.Roam;
+
+    public ObservableVariable<State> CurrentState = new(State.Roam);
 
     [Header("Behaviour: Roam")]
     [SerializeField] float _minRoamRange = 0;
@@ -44,6 +47,8 @@ public class WalkerAI : NetworkBehaviour
     [SerializeField] Transform _target;
     [SerializeField] AINoiseSensor _noiseSensor;
 
+    public event Action OnAttack;
+
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
@@ -55,9 +60,9 @@ public class WalkerAI : NetworkBehaviour
         }
 
         movementHandler = GetComponent<AIMovement>();
+        GetComponentInChildren<DamageSource>().SetDamage(_attackDamage);
 
         //_noiseSensor.OnCloserNoiseDetected += InvestigatePoint;
-
         StartCoroutine(RoamOnStart());
     }
 
@@ -65,6 +70,11 @@ public class WalkerAI : NetworkBehaviour
     {
         yield return null;
         RoamToRandomPoint(_maxRoamRange);
+    }
+
+    private void Start()
+    {
+        OnAttack += GetComponent<EntityAnimationHandler>().PlayAttackAnimation;
     }
 
     private void FixedUpdate()
@@ -75,23 +85,12 @@ public class WalkerAI : NetworkBehaviour
         TryToAttack();
     }
 
-    private void TryToAttack()
-    {
-        if (CurrentState == State.Chase)
-        {
-            float distanceFromTarget = Vector2.Distance(transform.position, _target.position);
-            if (distanceFromTarget <= AttackRange && !_attackOnCooldown)
-            {
-                AttackTarget();
-            }
-        }
-    }
 
     void InvestigatePoint(Vector2 point)
     {
         SwitchState(State.Investigate);
 
-        movementHandler.WalkToPoint(point);
+        movementHandler.MoveToPoint(point, true);
         movementHandler.OnReachedPoint += ReachedNoiseSource;
     }
 
@@ -121,26 +120,40 @@ public class WalkerAI : NetworkBehaviour
 
 
     #region Attacking Algorithm
-    void AttackTarget()
+    //void AttackTarget()
+    //{
+    //    HealthSystem targetHealthSystem = _target.GetComponent<HealthSystem>();
+
+    //    Debug.Log($"Attacking {targetHealthSystem}");
+
+    //    if (targetHealthSystem == null)
+    //    {
+    //        Debug.LogWarning($"{gameObject} has attempted to attack a target [{_target}] without a health system!");
+    //        return;
+    //    }
+
+    //    targetHealthSystem.DamageEntity(_attackDamage);
+    //    _attackOnCooldown = true;
+
+    //    StartCoroutine(ExecuteCooldown());
+    //}
+
+    private void TryToAttack()
     {
-        HealthSystem targetHealth = _target.GetComponent<HealthSystem>();
-
-        Debug.Log($"Attacking {targetHealth}");
-
-        if (targetHealth == null)
+        if (CurrentState.Value == State.Chase)
         {
-            Debug.LogWarning($"{gameObject} has attempted to attack a target [{_target}] without a health system!");
-            return;
+            float distanceFromTarget = Vector2.Distance(transform.position, _target.position);
+            if (distanceFromTarget <= AttackRange && !_attackOnCooldown)
+            {
+                OnAttack.Invoke();
+                StartCoroutine(ExecuteCooldown());
+            }
         }
-
-        targetHealth.Damage(_attackDamage);
-        _attackOnCooldown = true;
-
-        StartCoroutine(ExecuteCooldown());
     }
 
     IEnumerator ExecuteCooldown()
     {
+        _attackOnCooldown = true;
         yield return new WaitForSeconds(_attackCooldown);
         _attackOnCooldown = false;
     }
@@ -184,7 +197,7 @@ public class WalkerAI : NetworkBehaviour
         // If a reachable point is found, move the character to it
         if (pointFound)
         {
-            movementHandler.WalkToPoint(newPoint);
+            movementHandler.MoveToPoint(newPoint, false);
             movementHandler.OnReachedPoint += ReachedRoamPoint;
         }
         else
@@ -198,7 +211,7 @@ public class WalkerAI : NetworkBehaviour
     {
         movementHandler.OnReachedPoint -= ReachedRoamPoint;
         
-        if (CurrentState == State.Roam)
+        if (CurrentState.Value == State.Roam)
         {
             //Debug.Log("Reached point!");
             StartCoroutine(RoamAfterDelay(3));
@@ -217,11 +230,11 @@ public class WalkerAI : NetworkBehaviour
         NetworkObject closestVisiblePlayer = GetClosestVisiblePlayer();
         _targetVisible = (closestVisiblePlayer != null);
 
-        if (_targetVisible && CurrentState != State.Chase)
+        if (_targetVisible && CurrentState.Value != State.Chase)
         {
             ChasePlayer(closestVisiblePlayer);
         }
-        else if (CurrentState == State.Chase && !_targetVisible)
+        else if (CurrentState.Value == State.Chase && !_targetVisible)
         {
             StartCoroutine(FollowTargetAfterLosingSight(_aggroDurationAfterTargetLost, _delayBeforeContinuingToRoam));
         }
@@ -328,7 +341,7 @@ public class WalkerAI : NetworkBehaviour
 
     public void SwitchState(State state)
     {
-        CurrentState = state;
+        CurrentState.Value = state;
 
         switch (state)
         {

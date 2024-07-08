@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class HealthSystem : NetworkBehaviour
 {
     public NetworkVariable<float> MaxHealth = new(100);
@@ -21,7 +22,7 @@ public class HealthSystem : NetworkBehaviour
         CurrentHealth.Value = MaxHealth.Value;
     }
 
-    public void Damage(float damage)
+    public void DamageEntity(float damage)
     {
         if (!IsServer)
         {
@@ -38,7 +39,7 @@ public class HealthSystem : NetworkBehaviour
         }
     }
 
-    public void Heal(float health)
+    public void HealEntity(float health)
     {
         if (!IsServer)
         {
@@ -55,5 +56,23 @@ public class HealthSystem : NetworkBehaviour
         }
 
         OnPlayerHealed?.Invoke(CurrentHealth.Value);
+    }
+
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("DamageSource")) //Checks if the collider is tagged as a damage source
+        {
+            DamageSource damageSrc = collision.GetComponent<DamageSource>(); //Gets the damage source belonging to the collider 
+
+            if (damageSrc == null) 
+            {
+                Debug.LogWarning($"{transform.root.gameObject}'s {gameObject} is tagged as DamageSource, but doesn't contain a component!");
+                return;
+            }
+
+
+            DamageEntity(damageSrc.Damage);
+            Debug.Log($"{transform.root.gameObject} has been damaged by {collision.transform.root}!");
+        }
     }
 }

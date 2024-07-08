@@ -1,25 +1,11 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Netcode;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public enum MovementState
+
+
+public class PlayerMovementHandler : MovementHandler
 {
-    Idle,
-    Walking,
-    Sprinting
-}
-
-public class PlayerMovementHandler : ServerSideNetworkedBehaviour
-{
-    [Header("Parameters")]
-    [SerializeField] float _walkSpeed = 300;
-    [SerializeField] float _sprintSpeed = 500;
-
     [field: SerializeField] public float MaxStamina { get; private set; } = 100;
     [field: SerializeField] public float CurrentStamina { get; private set; } = 100;
     [field: SerializeField] public float StaminaDrainRate { get; private set; } = 20;
@@ -32,8 +18,6 @@ public class PlayerMovementHandler : ServerSideNetworkedBehaviour
     [SerializeField] PlayerInputController _inputController;
 
     [Header("Debug")]
-    public ObservableVariable<MovementState> CurrentMovementState = new(MovementState.Idle);
-
     public bool IsRecoveringFromSprint = false;
 
     //unserialized fields
@@ -41,11 +25,6 @@ public class PlayerMovementHandler : ServerSideNetworkedBehaviour
 
     //Events
     public event Action<float> OnStaminaChanged;
-
-    public override void OnNetworkSpawn()
-    {
-        enabled = IsOwner;
-    }
 
     public void SetActions() //Gets called by the input controller to sub to it's actions once they are set
     {
@@ -55,24 +34,12 @@ public class PlayerMovementHandler : ServerSideNetworkedBehaviour
 
     private void FixedUpdate()
     {
-        float moveSpeed = _walkSpeed;
-
         if (moveDir == Vector2.zero) CurrentMovementState.Value = MovementState.Idle; //If the player isn't pressing the WASD keys, consider him idle
         else if (CurrentMovementState.Value != MovementState.Sprinting) CurrentMovementState.Value = MovementState.Walking; //If the player is pressing the WASD keys but isn't running, consider him walking
-        else //If the player is sprinting 
-        {
-            if (0 >= CurrentStamina)
-            {
-                StopSprinting();
-            }
-            else
-            {
-                moveSpeed = _sprintSpeed;
-            }
-        }
+        else if (0 >= CurrentStamina) StopSprinting(); //If the player is sprinting and out of stamina
 
         UpdateStamina();
-        _rb2d.velocity = Time.deltaTime * moveSpeed * moveDir;
+        _rb2d.velocity = Time.deltaTime * GetMovementTypeByState(CurrentMovementState.Value).Velocity * moveDir;
     }
 
     void UpdateStamina()

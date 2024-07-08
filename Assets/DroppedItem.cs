@@ -13,6 +13,11 @@ public class DroppedItem : NetworkBehaviour, IInteractable
 
     public NetworkVariable<bool> IsInteractable { get; set; } = new(true);
 
+    private void Start()
+    {
+        if (_item != null)
+            SetItem(_item);
+    }
     public void SetItem(Item item)
     {
         _item = item;

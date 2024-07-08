@@ -4,7 +4,7 @@ using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class AIMovement : NetworkBehaviour
+public class AIMovement : MovementHandler
 {
     [Header("Properties")]
     [SerializeField] float _walkSpeed;
@@ -23,26 +23,15 @@ public class AIMovement : NetworkBehaviour
 
     public WalkerAI AIHandler;
 
-    public NetworkVariable<bool> IsWalking = new(false);
-    public NetworkVariable<bool> IsChasing = new(false);
-
     private bool _firedReachPointEvent = false;
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
 
-        if (!IsServer)
-        {
-            enabled = false;
-            return;
-        }
-
         NavigationAgent = GetComponent<NavMeshAgent>();
         NavigationAgent.updateRotation = false;
         NavigationAgent.updateUpAxis = false;
-
-        
     }
 
     private void OnTriggerEnter2D(Collider2D collision) //Handles collision with doors
@@ -72,8 +61,8 @@ public class AIMovement : NetworkBehaviour
         {
             OnReachedPoint?.Invoke();
             _firedReachPointEvent = true;
-            IsWalking.Value = false;
-            IsChasing.Value = false;
+            CurrentMovementState.Value = MovementState.Idle;
+
             //Debug.Log("AI has reached target point");
         }
 
@@ -89,7 +78,7 @@ public class AIMovement : NetworkBehaviour
 
         if (_pointTarget != Vector2.zero)
         {
-            MoveToPosition(_pointTarget);
+            SetAgentDestination(_pointTarget);
         }
 
         RotateTowardsTarget();
@@ -116,26 +105,21 @@ public class AIMovement : NetworkBehaviour
     }
 
 
-    void MoveToPosition(Vector2 pos)
+    void SetAgentDestination(Vector2 pos) //Tells the agent to move to a destination
     {
         _firedReachPointEvent = false;
         NavigationAgent.SetDestination(pos);
-        if (IsWalking.Value)
-        {
-            NavigationAgent.speed = _walkSpeed;
-        }
-        else
-        {
-            NavigationAgent.speed = _runSpeed;
-        }
+
+        NavigationAgent.speed = GetMovementTypeByState(CurrentMovementState.Value).Velocity;
     }
 
-    public void WalkToPoint(Vector2 point) //Tell the AI to move to a certain point
+    public void MoveToPoint(Vector2 point, bool runToPoint) //Tell the AI to move to a certain point.
     {
         _target = null;
         _pointTarget = point;
-        IsWalking.Value = true;
-        IsChasing.Value = false;
+        
+        if (runToPoint) CurrentMovementState.Value = MovementState.Sprinting;
+        else CurrentMovementState.Value = MovementState.Walking; 
 
         // Debug.Log($"Moving to new point: {point}");
     }
@@ -147,8 +131,8 @@ public class AIMovement : NetworkBehaviour
         _target = target.transform;
         _pointTarget = target.transform.position;
 
-        IsWalking.Value = false;
-        IsChasing.Value = true;
+        CurrentMovementState.Value = MovementState.Sprinting;
+
 
         //Debug.Log($"Following new target: {target}");
     }

@@ -3,40 +3,34 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class EntityAnimationHandler : NetworkBehaviour
+public class EntityAnimationHandler : ServerSideNetworkedBehaviour
 {
-    ModelAnimationHandler _modelAnimationHandler;
+    Animator _animator;
     AIMovement _movementHandler;
 
     [Header("Animation Clips")]
-    [SerializeField] AnimationClip _idleClip;
-    [SerializeField] AnimationClip _walkClip;
-    [SerializeField] AnimationClip _chaseClip;
+
     [SerializeField] AnimationClip _attackClip;
 
-    [SerializeField] float _fadeDuration = 0.5f;
+    //[SerializeField] float _fadeDuration = 0.5f;
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        enabled = IsServer;
 
-        _modelAnimationHandler = GetComponentInChildren<ModelAnimationHandler>();
+        _animator = GetComponentInChildren<Animator>();
         _movementHandler = GetComponent<AIMovement>();
 
-        _movementHandler.IsWalking.OnValueChanged += (_, __) => MovementStateChanged();
-        _movementHandler.IsChasing.OnValueChanged += (_, __) => MovementStateChanged();
+        _movementHandler.CurrentMovementState.OnValueChanged += MovementStateChanged; //Updates the animation whenever the entity switches movement type
     }
 
-    void MovementStateChanged()
+    void MovementStateChanged(MovementState state)
     {
-        if (_movementHandler.IsWalking.Value)
-        {
-            _modelAnimationHandler.PlayAnimation(_walkClip, _fadeDuration);
-        }
-        else if (_movementHandler.IsChasing.Value)
-        {
-            _modelAnimationHandler.PlayAnimation(_chaseClip, _fadeDuration);
-        }
+        _animator.SetTrigger(_movementHandler.GetMovementTypeByState(state).AnimationTriggerName);
+    }
+
+    public void PlayAttackAnimation()
+    {
+        _animator.SetTrigger("Attack");
     }
 }

@@ -5,9 +5,13 @@ using UnityEngine.Rendering.Universal;
 
 public class MapSettingsController : MonoBehaviour
 {
+    [Header("Properties")]
     [SerializeField] float _darknessIntensity = 1.0f;
     [SerializeField] float _globalLightIntensity = 0f;
+    [SerializeField] bool _revealWholeMap = false;
 
+    [Header("Serialized References")]
+    [SerializeField] GameObject _mapRevealer;
     [SerializeField] SpriteRenderer _darknessSpriteRenderer;
     [SerializeField] Light2D _globalLight;
 
@@ -19,5 +23,7 @@ public class MapSettingsController : MonoBehaviour
         _darknessSpriteRenderer.color = clr;
 
         _globalLight.intensity = _globalLightIntensity;
+
+        if (_revealWholeMap) _mapRevealer.SetActive(true);
     }
 }

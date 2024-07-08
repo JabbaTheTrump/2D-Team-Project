@@ -5,20 +5,15 @@ using UnityEngine;
 
 public class ModelAnimationHandler : MonoBehaviour
 {
-    [SerializeField] AnimancerComponent _animancer;
+    private Animator _animator;
 
     private void Start()
     {
-        _animancer = GetComponent<AnimancerComponent>();
+        _animator = GetComponent<Animator>();
     }
 
-    public void PlayAnimation(AnimationClip clip)
+    public void SetAnimationTrigger(string animationTriggerName)
     {
-        _animancer.Play(clip);
-    }
-
-    public void PlayAnimation(AnimationClip clip, float transitionDuration)
-    {
-        _animancer.Play(clip, transitionDuration);
+        _animator.SetTrigger(animationTriggerName);
     }
 }

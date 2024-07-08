@@ -1,15 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
-class AINoiseManager : NetworkBehaviour
+class AINoiseManager : ServerSideNetworkedBehaviour
 {
     [HideInInspector] public static AINoiseManager Instance;
 
-    List<NoiseInstance> currentNoises = new List<NoiseInstance>();
+    List<NoiseInstance> _currentNoises = new List<NoiseInstance>();
 
+    [SerializeField] float _timeBetweenNoiseQueries = 0.5f;
 
     private void Awake()
     {
@@ -23,28 +27,37 @@ class AINoiseManager : NetworkBehaviour
         }
     }
 
-    IEnumerator QueryNoises(float timeBetweenQueries)
+    IEnumerator QueryNoises()
     {
         while (true)
         {
-            yield return new WaitForSeconds(timeBetweenQueries);
+            yield return new WaitForSeconds(_timeBetweenNoiseQueries);
 
-            foreach (NoiseInstance noise in currentNoises)
+            foreach (NoiseInstance noise in _currentNoises) //Queries every noise instance in the list
             {
+                // Reduces the noise's duration and deletes it if it reaches 0
+                noise.RemainingDuration -= Time.deltaTime;
 
+                if (0 >= noise.RemainingDuration)
+                {
+                    _currentNoises.Remove(noise);
+                    continue;
+                }
+                //
+
+                QueryNoise(noise);
             }
         }
     }
 
     private void Start()
     {
-        if (!IsServer) enabled = false;
+        StartCoroutine(QueryNoises());
     }
 
-    public void CreateNoiseAtPoint(Vector2 point, float distance)
+    void QueryNoise(NoiseInstance noise)
     {
-        Debug.Log("Noise Created!");
-        Collider2D[] enemyColliders = Physics2D.OverlapCircleAll(point, distance);
+        Collider2D[] enemyColliders = Physics2D.OverlapCircleAll(noise.Position, noise.Radius);
 
         if (enemyColliders.Length < 0) return;
 
@@ -54,20 +67,39 @@ class AINoiseManager : NetworkBehaviour
             if (sensor == null) break;
 
             Debug.Log($"{collider.transform.root.name} has detected a noise!");
-            sensor.RegisterNoise(point);
+            sensor.RegisterNoise(noise.Position);
         }
+    }
+
+    public void CreateNoiseAtPoint(Vector2 point, float radius)
+    {
+        Debug.Log("Noise Created!");
+
+        NoiseInstance createdNoise = new NoiseInstance(point, radius); //Creates the noise
+
+        _currentNoises.Add(createdNoise); //Adds it to the list
+
+        QueryNoise(createdNoise); //Queries it for the first time
     }
 }
 
 public class NoiseInstance
 {
     public Vector2 Position;
-    public float Distance;
-    public bool IsActive = false;
+    public float Radius;
+    public float RemainingDuration;
 
-    public NoiseInstance(float distance, bool startActive)
+    public NoiseInstance(Vector2 position, float radius, float duration)
     {
-        Distance = distance;
-        IsActive = startActive;
+        Radius = radius;
+        RemainingDuration = duration;
+        Position = position;
+    }
+
+    public NoiseInstance(Vector2 position, float radius)
+    {
+        Radius = radius;
+        RemainingDuration = 0.1f;
+        Position = position;
     }
 }
