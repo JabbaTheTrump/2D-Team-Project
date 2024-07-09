@@ -478,6 +478,8 @@ MonoBehaviour:
   <StaminaRecoveryRate>k__BackingField: 10
   <StaminaSprintThreshold>k__BackingField: 20
   <RecoveryPeriod>k__BackingField: 2
+  _walkNoiseRadius: 2
+  _sprintNoiseRadius: 4
   _rb2d: {fileID: 8955925047277001623}
   _inputController: {fileID: 6464352726500142779}
   IsRecoveringFromSprint: 0

@@ -17,3 +17,6 @@ MonoBehaviour:
   ItemSprite: {fileID: 21300000, guid: 38325c267ca814f4d8a4bfe216235bc3, type: 3}
   ItemIconUI: {fileID: 21300000, guid: 38325c267ca814f4d8a4bfe216235bc3, type: 3}
   HarvestTime: 3
+  NoiseDistance: 9
+  _drillingAudioClip: {fileID: 8300000, guid: af885554e360135428095f3e55c65c3d, type: 3}
+  _finishAudioClip: {fileID: 8300000, guid: 837329b4fa1b9aa4dbadb37f4ac41531, type: 3}

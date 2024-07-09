@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.Tutorials.Core.Editor;
 using UnityEngine;
 
 
@@ -12,6 +13,11 @@ public class PlayerMovementHandler : MovementHandler
     [field: SerializeField] public float StaminaRecoveryRate { get; private set; } = 15;
     [field: SerializeField] public float StaminaSprintThreshold { get; private set; } = 20; //The minimum stamina required to start a sprint
     [field: SerializeField] public float RecoveryPeriod { get; private set; } = 2;
+
+    [Space]
+    [Header("Player Noise")]
+    [SerializeField] float _walkNoiseRadius = 2;
+    [SerializeField] float _sprintNoiseRadius = 8;
 
     [Header("Serialized References")]
     [SerializeField] Rigidbody2D _rb2d;
@@ -34,9 +40,24 @@ public class PlayerMovementHandler : MovementHandler
 
     private void FixedUpdate()
     {
-        if (moveDir == Vector2.zero) CurrentMovementState.Value = MovementState.Idle; //If the player isn't pressing the WASD keys, consider him idle
-        else if (CurrentMovementState.Value != MovementState.Sprinting) CurrentMovementState.Value = MovementState.Walking; //If the player is pressing the WASD keys but isn't running, consider him walking
+        if (moveDir == Vector2.zero)
+        {
+            CurrentMovementState.Value = MovementState.Idle; //If the player isn't pressing the WASD keys, consider him idle
+        }
+
+        else if (CurrentMovementState.Value != MovementState.Sprinting)
+        {
+            CurrentMovementState.Value = MovementState.Walking; //If the player is pressing the WASD keys but isn't running, consider him walking
+
+            AINoiseManager.Instance.CreateNoiseAtPoint(transform.position, _walkNoiseRadius);
+        }
+
         else if (0 >= CurrentStamina) StopSprinting(); //If the player is sprinting and out of stamina
+
+        else //If the player is sprinting
+        {
+            AINoiseManager.Instance.CreateNoiseAtPoint(transform.position, _sprintNoiseRadius);
+        }
 
         UpdateStamina();
         _rb2d.velocity = Time.deltaTime * GetMovementTypeByState(CurrentMovementState.Value).Velocity * moveDir;
@@ -57,8 +78,7 @@ public class PlayerMovementHandler : MovementHandler
             CurrentStamina += StaminaRecoveryRate * Time.deltaTime;
             if (CurrentStamina > MaxStamina) CurrentStamina = MaxStamina;
         }
-
-        if (previousStamina != CurrentStamina)
+        if (previousStamina != CurrentStamina) //Invoke an event if the stamina changes **TRY TO IMPELEMENT OBSERVABLE VARIABLE INSTEAD
         {
             OnStaminaChanged?.Invoke(CurrentStamina);
         }

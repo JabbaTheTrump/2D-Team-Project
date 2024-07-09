@@ -9,15 +9,15 @@ public class BiomassHarvester : NetworkBehaviour, IInteractable
 
     HarvesterItemData _harvesterData;
 
-    //AudioClip _drillingAudioClip;
-    //AudioClip _finishAudioClip;
-
     public NetworkVariable<bool> IsInteractable { get; set; } = new(false); //Set to Whether the harvester finished harvesting
+
+    AudioSource _audioSource;
 
     public void StartHarvester(Biomass mass, HarvesterItemData harvesterData)
     {
         _biomassNode = mass;
         _harvesterData = harvesterData;
+        _audioSource = GetComponentInChildren<AudioSource>();
         StartCoroutine(StartHarvester()); 
     }
 
@@ -31,8 +31,27 @@ public class BiomassHarvester : NetworkBehaviour, IInteractable
 
     IEnumerator StartHarvester()
     {
+        PlayDrillAudioClientRpc();
+
+        AINoiseManager.Instance.CreateNoiseAtPoint(transform.position, _harvesterData.NoiseDistance, _harvesterData.HarvestTime);
         yield return new WaitForSeconds(_harvesterData.HarvestTime);
 
+        PlayFinishAudioClientRpc();
+
         IsInteractable.Value = true;
+    }
+
+    [ClientRpc]
+    void PlayDrillAudioClientRpc()
+    {
+        _audioSource.clip = _harvesterData._drillingAudioClip;
+        _audioSource.Play();
+    }
+
+    [ClientRpc]
+    void PlayFinishAudioClientRpc()
+    {
+        _audioSource.clip = _harvesterData._finishAudioClip;
+        _audioSource.Play();
     }
 }

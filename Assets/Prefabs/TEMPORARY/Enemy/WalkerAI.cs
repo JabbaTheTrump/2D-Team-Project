@@ -62,7 +62,9 @@ public class WalkerAI : NetworkBehaviour
         movementHandler = GetComponent<AIMovement>();
         GetComponentInChildren<DamageSource>().SetDamage(_attackDamage);
 
-        //_noiseSensor.OnCloserNoiseDetected += InvestigatePoint;
+        _noiseSensor = GetComponentInChildren<AINoiseSensor>();
+        _noiseSensor.OnCloserNoiseDetected += InvestigatePoint;
+
         StartCoroutine(RoamOnStart());
     }
 
