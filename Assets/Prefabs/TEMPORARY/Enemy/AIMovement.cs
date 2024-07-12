@@ -28,6 +28,7 @@ public class AIMovement : MovementHandler
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
+        enabled = IsServer;
 
         NavigationAgent = GetComponent<NavMeshAgent>();
         NavigationAgent.updateRotation = false;

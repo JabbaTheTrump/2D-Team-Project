@@ -12,7 +12,6 @@ public class Door : NetworkBehaviour, IToggleableInteractable
     public NetworkVariable<bool> ToggledOn { get; set; } = new(false);
 
     private Animator _animator;
-    private NavMeshObstacle _obstacle;
 
     private void Awake()
     {

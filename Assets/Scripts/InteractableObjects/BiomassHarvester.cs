@@ -13,24 +13,28 @@ public class BiomassHarvester : NetworkBehaviour, IInteractable
 
     AudioSource _audioSource;
 
+    public bool _resourcePickedUp = false;
+
     public void StartHarvester(Biomass mass, HarvesterItemData harvesterData)
     {
+        _audioSource = GetComponentInChildren<AudioSource>();
         _biomassNode = mass;
         _harvesterData = harvesterData;
-        _audioSource = GetComponentInChildren<AudioSource>();
         StartCoroutine(StartHarvester()); 
     }
 
     public void Interact(NetworkObject interactor)
     {
-        if (interactor.GetComponentInChildren<InventorySystem>().TryPickUpItem(_biomassNode.Sample))
+        if (interactor.GetComponentInChildren<InventorySystem>().TryPickUpItem(_biomassNode.Sample) && !_resourcePickedUp)
         {
+            _resourcePickedUp = true;
             IsInteractable.Value = false;
         }
     }
 
     IEnumerator StartHarvester()
     {
+        SetUpHarvesterClientRpc(_harvesterData.Id);
         PlayDrillAudioClientRpc();
 
         AINoiseManager.Instance.CreateNoiseAtPoint(transform.position, _harvesterData.NoiseDistance, _harvesterData.HarvestTime);
@@ -39,6 +43,20 @@ public class BiomassHarvester : NetworkBehaviour, IInteractable
         PlayFinishAudioClientRpc();
 
         IsInteractable.Value = true;
+    }
+
+    [ClientRpc]
+    void SetUpHarvesterClientRpc(int harvesterDataId)
+    {
+        _audioSource = GetComponentInChildren<AudioSource>();
+        _harvesterData = ItemDictionary.Instance.GetItemDataById(harvesterDataId) as HarvesterItemData;
+        
+
+        if (_harvesterData == null)
+        {
+            Debug.LogWarning("Client does not have a valid harvesterdata!");
+            return;
+        }
     }
 
     [ClientRpc]

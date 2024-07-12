@@ -7,7 +7,15 @@ using UnityEngine;
 public class BiomassCollector : NetworkBehaviour, IInteractable
 {
     [SerializeField] ItemData _sampleItemData;
+    [SerializeField] AudioClip _successAudio;
+    [SerializeField] AudioClip _failureAudio;
+    AudioSource _audioSource;
     public NetworkVariable<bool> IsInteractable { get; set; } = new(true);
+
+    private void Start()
+    {
+        _audioSource = GetComponent<AudioSource>();
+    }
 
     public void Interact(NetworkObject interactor)
     {
@@ -23,6 +31,7 @@ public class BiomassCollector : NetworkBehaviour, IInteractable
 
         if (slot == null)
         {
+            PlayInteractionAudioClientRpc(false);
             return;
         }
 
@@ -30,5 +39,15 @@ public class BiomassCollector : NetworkBehaviour, IInteractable
 
         playerInv.TryRemoveItem(slot.Index, false);
         GameStateController.Instance.AddSample();
+        PlayInteractionAudioClientRpc(true);
+    }
+
+    [ClientRpc] 
+    public void PlayInteractionAudioClientRpc(bool success)
+    {
+        if (success) _audioSource.clip = _successAudio;
+        else _audioSource.clip = _failureAudio;
+
+        _audioSource.Play();
     }
 }

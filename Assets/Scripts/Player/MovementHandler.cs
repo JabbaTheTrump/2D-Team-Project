@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
 public enum MovementState
@@ -17,7 +18,7 @@ public class MovementType
     public string AnimationTriggerName;
 }
 
-public class MovementHandler : ServerSideNetworkedBehaviour
+public class MovementHandler : NetworkBehaviour
 {
     public MovementType[] MovementTypes;
     [field: SerializeField] public ObservableVariable<MovementState> CurrentMovementState { get; protected set; } = new(MovementState.Idle);

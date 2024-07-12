@@ -28,11 +28,11 @@ public class InventorySystem : NetworkBehaviour
         InitializeInventorySlots();
     }
 
-    public override void OnNetworkSpawn()
-    {
-        base.OnNetworkSpawn();
-        enabled = IsServer || IsOwner;
-    }
+    //public override void OnNetworkSpawn()
+    //{
+    //    base.OnNetworkSpawn();
+    //    enabled = IsServer || IsOwner;
+    //}
 
     private void InitializeInventorySlots()
     {
