@@ -7,6 +7,7 @@ using Unity.Netcode;
 using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class InteractionHandler : NetworkBehaviour
 {
@@ -21,6 +22,11 @@ public class InteractionHandler : NetworkBehaviour
     [SerializeField] bool _displayHoverGizmo = false;
     [SerializeField] LayerMask _interactionLayer;
     [SerializeField] Camera _camera;
+
+    // Button Holding Interaction
+    [SerializeField] Slider _interactionProgressBar;
+    //
+
     [field: SerializeField] public GameObject HoveredObject { get; private set; }
 
     //Events
@@ -81,7 +87,7 @@ public class InteractionHandler : NetworkBehaviour
     bool IsSelectable(GameObject obj)
     {
         return obj.layer == 6 && 
-            Vector2.Distance(obj.transform.position, transform.position) <= _interactionRange;
+            Vector2.Distance(obj.transform.position, transform.position) <= _interactionRange; //Checks if an object is in the interaction layer and within range
     }
 
     void StartedHovering(GameObject target)
@@ -96,13 +102,69 @@ public class InteractionHandler : NetworkBehaviour
         OnHoverStopped?.Invoke();
     }
 
-    void OnInteract_Press() //Idea - implement the holding interaction on the client side, and only call the "interact" method on the object when interaction is finished
+    public void OnInteractPress()
     {
+        Debug.Log("Press");
+
         if (HoveredObject != null)
         {
             TryToInteractServerRpc(HoveredObject.GetComponentInChildren<NetworkObject>().NetworkObjectId);
         }
     }
+
+    public  void OnInteractHold()
+    {
+        Debug.Log("Hold");
+    }
+    
+
+
+    //void OnInteract_Press(InputAction.CallbackContext context) //Idea - implement the holding interaction on the client side, and only call the "interact" method on the object when interaction is finished
+    //{
+    //    Debug.Log(context.interaction + " " + context.phase);
+
+    //    if (HoveredObject != null)
+    //    {
+    //        TryToInteractServerRpc(HoveredObject.GetComponentInChildren<NetworkObject>().NetworkObjectId);
+    //    }
+    //}
+
+    //void IntearctionButtonHeld()
+    //{
+    //    ProgressBarInteractableObject interactionModule = HoveredObject.GetComponentInChildren<ProgressBarInteractableObject>();
+
+    //    if (interactionModule == null) return;
+    //    if (interactionModule.BeingInteractedWith.Value) return;
+
+    //    StartCoroutine(StartProgressBarInteraction(interactionModule));
+    //}
+
+    //void InteractionButtonLetGo()
+    //{
+
+    //}
+
+    
+    IEnumerator StartProgressBarInteraction(ProgressBarInteractableObject interactionModule)
+    {
+        float timePassedSinceStarted = 0f;
+
+        interactionModule.BeingInteractedWith.Value = true;
+        _interactionProgressBar.maxValue = interactionModule.InteractionTime;
+
+        while (interactionModule.InteractionTime >  timePassedSinceStarted) 
+        {
+            timePassedSinceStarted += Time.deltaTime;
+
+            _interactionProgressBar.value = timePassedSinceStarted;
+
+            yield return null;
+        }
+
+        interactionModule.BeingInteractedWith.Value = false;
+        TryToInteractServerRpc(HoveredObject.GetComponentInChildren<NetworkObject>().NetworkObjectId);
+    }
+
 
     [ServerRpc(RequireOwnership = false)]
     void TryToInteractServerRpc(ulong objectId) //Sends the interaction requst to the server to further verify that the interaction is valid

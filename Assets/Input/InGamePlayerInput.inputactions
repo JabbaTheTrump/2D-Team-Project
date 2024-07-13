@@ -42,21 +42,12 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Interact_Hold",
-                    "type": "Button",
-                    "id": "52a93be6-a570-4485-b716-c9152e28d808",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Hold",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Interact_Press",
+                    "name": "Interact",
                     "type": "Button",
                     "id": "b86736bd-98e5-48ff-bbbf-5afeb87e75e6",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Tap,Hold",
                     "initialStateCheck": false
                 },
                 {
@@ -303,23 +294,12 @@
                 },
                 {
                     "name": "",
-                    "id": "3d017742-d25e-4362-9019-de44c302e0a2",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Interact_Hold",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "dcd836c3-7f9b-4419-99b6-29852b13ed91",
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Interact_Press",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

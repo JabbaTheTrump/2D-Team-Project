@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 public class PlayerInputController : NetworkBehaviour
 {
     [SerializeField] PlayerMovementHandler _movementHandler;
+    [SerializeField] InteractionHandler _interactionHandler;
 
     InventorySystem _inventory;
 
@@ -30,27 +32,55 @@ public class PlayerInputController : NetworkBehaviour
     {
         base.OnNetworkSpawn();
         enabled = IsOwner;
-        SetActions();
     }
 
-    void SetActions()
+    public void OnMove(InputAction.CallbackContext context)
     {
-        _playerInput = GetComponentInChildren<PlayerInput>();
-
-        SprintAction = _playerInput.currentActionMap.FindAction("Sprint");
-
-        _movementHandler.SetActions();
+        _movementHandler.moveDir = context.ReadValue<Vector2>();
     }
 
-    void OnMove(InputValue value)
+    public void OnSprint(InputAction.CallbackContext context)
     {
-        _movementHandler.moveDir = value.Get<Vector2>();
+        switch (context.phase)
+        {
+            case InputActionPhase.Started:
+                _movementHandler.StartSprinting(); 
+                break;
+            case InputActionPhase.Canceled: 
+                _movementHandler.StopSprinting(); 
+                break;
+        }
     }
 
-    void OnDrop()
+    public void OnDrop()
     {
         DropItemServerRpc();
     }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        switch (context.interaction)
+        {
+            case TapInteraction:
+                if (context.phase == InputActionPhase.Performed) _interactionHandler.OnInteractPress();
+            break;
+
+            case HoldInteraction:
+                switch (context.phase)
+                {
+                    case InputActionPhase.Performed:
+                        _interactionHandler.OnInteractHold();
+                        break;
+
+                    case InputActionPhase.Canceled:
+
+                        break;
+                }
+
+            break;
+        }
+    }
+
 
     [ServerRpc(RequireOwnership = false)]
     void DropItemServerRpc()

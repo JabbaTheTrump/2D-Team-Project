@@ -32,11 +32,11 @@ public class PlayerMovementHandler : MovementHandler
     //Events
     public event Action<float> OnStaminaChanged;
 
-    public void SetActions() //Gets called by the input controller to sub to it's actions once they are set
-    {
-        _inputController.SprintAction.started += _ => StartSprinting();
-        _inputController.SprintAction.canceled += _ => StopSprinting();
-    }
+    //public void SetActions() //Gets called by the input controller to sub to it's actions once they are set
+    //{
+    //    _inputController.SprintAction.started += _ => StartSprinting();
+    //    _inputController.SprintAction.canceled += _ => StopSprinting();
+    //}
 
     private void FixedUpdate()
     {
@@ -84,14 +84,14 @@ public class PlayerMovementHandler : MovementHandler
         }
     }
 
-    void StartSprinting()
+    public void StartSprinting()
     {
         if (StaminaSprintThreshold > CurrentStamina) return; //Returns if there isn't enough stamina to start a sprint
         CurrentMovementState.Value = MovementState.Sprinting;
         //Debug.Log("Started sprinting");
     }
 
-    void StopSprinting()
+    public void StopSprinting()
     {
         if (CurrentMovementState.Value != MovementState.Sprinting) return; //Return if the player isn't currently sprinting
         CurrentMovementState.Value = MovementState.Idle;
