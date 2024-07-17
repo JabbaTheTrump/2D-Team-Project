@@ -46,7 +46,6 @@ public class BaseAIAudioManager : ServerSideNetworkedBehaviour
     {
         if (state == WalkerAI.State.Roam)
         {
-            _vocalAudioSource.volume = 0.6f;
             StartCoroutine(PlayIdleAudioAfterPeriod());
             return;
         }
@@ -55,7 +54,6 @@ public class BaseAIAudioManager : ServerSideNetworkedBehaviour
         {
             if (_canMakeAggroSound)
             {
-                _vocalAudioSource.volume = 1f;
                 PlayAggroAudioClientRpc(Random.Range(0, _aggroAudioClips.Length));
                 StartCoroutine(StartAggroSoundCooldown());
             }
@@ -98,7 +96,6 @@ public class BaseAIAudioManager : ServerSideNetworkedBehaviour
 
         _vocalAudioSource.clip = _idleAudioClips[index];
         _vocalAudioSource.Play();
-        Debug.Log("Playing idle sound");
     }
 
     [ClientRpc]
@@ -112,7 +109,6 @@ public class BaseAIAudioManager : ServerSideNetworkedBehaviour
 
         _vocalAudioSource.clip = _aggroAudioClips[index];
         _vocalAudioSource.Play();
-        Debug.Log("Playing aggro sound");
     }
 
     [ClientRpc]
@@ -126,7 +122,6 @@ public class BaseAIAudioManager : ServerSideNetworkedBehaviour
 
         _vocalAudioSource.clip = _attackAudioClips[index];
         _vocalAudioSource.Play();
-        Debug.Log("Playing attack sound");
     }
 }
 

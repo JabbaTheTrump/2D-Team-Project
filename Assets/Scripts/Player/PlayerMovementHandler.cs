@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.Netcode;
 using Unity.Tutorials.Core.Editor;
 using UnityEngine;
 
@@ -49,14 +50,14 @@ public class PlayerMovementHandler : MovementHandler
         {
             CurrentMovementState.Value = MovementState.Walking; //If the player is pressing the WASD keys but isn't running, consider him walking
 
-            AINoiseManager.Instance.CreateNoiseAtPoint(transform.position, _walkNoiseRadius);
+            GenerateMovementNoiseServerRpc(_walkNoiseRadius);
         }
 
         else if (0 >= CurrentStamina) StopSprinting(); //If the player is sprinting and out of stamina
 
         else //If the player is sprinting
         {
-            AINoiseManager.Instance.CreateNoiseAtPoint(transform.position, _sprintNoiseRadius);
+            GenerateMovementNoiseServerRpc(_sprintNoiseRadius);
         }
 
         UpdateStamina();
@@ -108,5 +109,12 @@ public class PlayerMovementHandler : MovementHandler
         yield return new WaitForSeconds(RecoveryPeriod);
 
         IsRecoveringFromSprint = false;
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    void GenerateMovementNoiseServerRpc(float noiseRadius)
+    {
+        AINoiseManager.Instance.CreateNoiseAtPoint(transform.position, noiseRadius);
     }
 }

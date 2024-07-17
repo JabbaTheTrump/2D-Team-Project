@@ -73,7 +73,7 @@ public class PlayerInputController : NetworkBehaviour
                         break;
 
                     case InputActionPhase.Canceled:
-
+                        _interactionHandler.OnInteractionCanceled();
                         break;
                 }
 

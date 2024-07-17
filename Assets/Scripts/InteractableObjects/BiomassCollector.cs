@@ -11,6 +11,8 @@ public class BiomassCollector : NetworkBehaviour, IInteractable
     [SerializeField] AudioClip _failureAudio;
     AudioSource _audioSource;
     public NetworkVariable<bool> IsInteractable { get; set; } = new(true);
+        public NetworkVariable<bool> BeingInteractedWith { get; set; } = new(false);
+    public float InteractionTime { get; set; }
 
     private void Start()
     {

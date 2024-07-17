@@ -10,6 +10,8 @@ public class BiomassHarvester : NetworkBehaviour, IInteractable
     HarvesterItemData _harvesterData;
 
     public NetworkVariable<bool> IsInteractable { get; set; } = new(false); //Set to Whether the harvester finished harvesting
+    public NetworkVariable<bool> BeingInteractedWith { get; set; } = new(false);
+    public float InteractionTime { get; set; }
 
     AudioSource _audioSource;
 

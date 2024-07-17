@@ -28,12 +28,6 @@ public class InventorySystem : NetworkBehaviour
         InitializeInventorySlots();
     }
 
-    //public override void OnNetworkSpawn()
-    //{
-    //    base.OnNetworkSpawn();
-    //    enabled = IsServer || IsOwner;
-    //}
-
     private void InitializeInventorySlots()
     {
         InventorySlots = new InventorySlot[SlotCount];
@@ -79,7 +73,7 @@ public class InventorySystem : NetworkBehaviour
         if (slotIndex < 0 || slotIndex >= InventorySlots.Length) return false; //Returns false if the slot index is invalid
         if (InventorySlots[slotIndex].Item == null) return false; //Returns false if the slot is empty
 
-        Debug.Log($"Dropping {InventorySlots[slotIndex].Item}");
+        Debug.Log($"Removing {InventorySlots[slotIndex].Item}");
 
 
         if (dropItem) //Drops the item on the server if needed
@@ -91,8 +85,9 @@ public class InventorySystem : NetworkBehaviour
 
         InventorySlots[slotIndex].RemoveItem(); //Empties the slot
 
-        OnItemRemoved?.Invoke();
         SyncItemRemovedClientRpc(slotIndex);
+
+        OnItemRemoved?.Invoke();
 
         return true;
     }

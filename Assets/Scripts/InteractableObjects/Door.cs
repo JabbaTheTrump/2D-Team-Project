@@ -10,6 +10,8 @@ public class Door : NetworkBehaviour, IToggleableInteractable
 {
     public NetworkVariable<bool> IsInteractable { get; set; } = new(true);
     public NetworkVariable<bool> ToggledOn { get; set; } = new(false);
+        public NetworkVariable<bool> BeingInteractedWith { get; set; } = new(false);
+    [field: SerializeField] public float InteractionTime { get; set; } = 0f;
 
     private Animator _animator;
 

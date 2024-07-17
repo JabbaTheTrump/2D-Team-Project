@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Linq;
 using Unity.Netcode;
+using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -24,7 +25,8 @@ public class InteractionHandler : NetworkBehaviour
     [SerializeField] Camera _camera;
 
     // Button Holding Interaction
-    [SerializeField] Slider _interactionProgressBar;
+    [SerializeField] Slider _interactionProgressSlider;
+    Coroutine _currentInteractionCoroutine;    
     //
 
     [field: SerializeField] public GameObject HoveredObject { get; private set; }
@@ -38,10 +40,21 @@ public class InteractionHandler : NetworkBehaviour
         base.OnNetworkSpawn();
 
         _camera = FindObjectOfType<Camera>();
+        _interactionProgressSlider = FindObjectsOfType<Slider>(true).Where(slider => slider.tag == "InteractionSlider").FirstOrDefault();
+
         if (_camera == null)
         {
-            Debug.Log("InteractionHandler failed to find camera!");
+            Debug.LogWarning("InteractionHandler failed to find camera!");
         }
+
+        if (_interactionProgressSlider == null)
+        {
+            Debug.LogWarning("InteractionHandler failed to find the interaction slider!");
+        }
+
+        _interactionProgressSlider.gameObject.SetActive(false);
+        OnHoverNewObject += (_) => OnInteractionCanceled();
+        OnHoverStopped += OnInteractionCanceled;
     }
 
     void Update()
@@ -49,6 +62,7 @@ public class InteractionHandler : NetworkBehaviour
         if (IsOwner)
         {
             GetObjectBeingHovered();
+            _interactionProgressSlider.transform.position = Input.mousePosition;
         }
     }
 
@@ -104,67 +118,58 @@ public class InteractionHandler : NetworkBehaviour
 
     public void OnInteractPress()
     {
-        Debug.Log("Press");
+        if (HoveredObject == null) return;
 
-        if (HoveredObject != null)
+        IInteractable interactionModule = HoveredObject.GetComponentInChildren<IInteractable>();
+
+        if (0 >= interactionModule.InteractionTime) 
         {
             TryToInteractServerRpc(HoveredObject.GetComponentInChildren<NetworkObject>().NetworkObjectId);
         }
     }
 
-    public  void OnInteractHold()
+    public void OnInteractHold() 
     {
-        Debug.Log("Hold");
+        if (HoveredObject == null) return;
+
+        IInteractable interactionModule = HoveredObject.GetComponentInChildren<IInteractable>();
+
+        if (interactionModule.InteractionTime > 0)
+        {
+            _currentInteractionCoroutine = StartCoroutine(StartProgressBarInteraction(interactionModule));
+        }
     }
-    
 
+    public void OnInteractionCanceled() //When a progress type interaction is canceled
+    {
+        if (_currentInteractionCoroutine != null)
+        StopCoroutine(_currentInteractionCoroutine);
 
-    //void OnInteract_Press(InputAction.CallbackContext context) //Idea - implement the holding interaction on the client side, and only call the "interact" method on the object when interaction is finished
-    //{
-    //    Debug.Log(context.interaction + " " + context.phase);
+        Cursor.visible = true;
+        _interactionProgressSlider.gameObject.SetActive(false);
+    }
 
-    //    if (HoveredObject != null)
-    //    {
-    //        TryToInteractServerRpc(HoveredObject.GetComponentInChildren<NetworkObject>().NetworkObjectId);
-    //    }
-    //}
-
-    //void IntearctionButtonHeld()
-    //{
-    //    ProgressBarInteractableObject interactionModule = HoveredObject.GetComponentInChildren<ProgressBarInteractableObject>();
-
-    //    if (interactionModule == null) return;
-    //    if (interactionModule.BeingInteractedWith.Value) return;
-
-    //    StartCoroutine(StartProgressBarInteraction(interactionModule));
-    //}
-
-    //void InteractionButtonLetGo()
-    //{
-
-    //}
-
-    
-    IEnumerator StartProgressBarInteraction(ProgressBarInteractableObject interactionModule)
+    IEnumerator StartProgressBarInteraction(IInteractable interactionModule)
     {
         float timePassedSinceStarted = 0f;
+        _interactionProgressSlider.gameObject.SetActive(true);
+        Cursor.visible = false;
 
-        interactionModule.BeingInteractedWith.Value = true;
-        _interactionProgressBar.maxValue = interactionModule.InteractionTime;
+        _interactionProgressSlider.maxValue = interactionModule.InteractionTime;
 
         while (interactionModule.InteractionTime >  timePassedSinceStarted) 
         {
             timePassedSinceStarted += Time.deltaTime;
 
-            _interactionProgressBar.value = timePassedSinceStarted;
+            _interactionProgressSlider.value = timePassedSinceStarted;
 
             yield return null;
         }
 
-        interactionModule.BeingInteractedWith.Value = false;
+        _interactionProgressSlider.gameObject.SetActive(false);
+        Cursor.visible = true;
         TryToInteractServerRpc(HoveredObject.GetComponentInChildren<NetworkObject>().NetworkObjectId);
     }
-
 
     [ServerRpc(RequireOwnership = false)]
     void TryToInteractServerRpc(ulong objectId) //Sends the interaction requst to the server to further verify that the interaction is valid

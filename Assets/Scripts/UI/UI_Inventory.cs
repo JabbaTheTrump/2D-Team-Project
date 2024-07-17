@@ -59,7 +59,7 @@ public class UI_Inventory : MonoBehaviour
             if (slotItem == null)
             {
                 _uiSlots[i].UpdateSlot(_emptyIcon);
-                return;
+                continue;
             }
 
             _uiSlots[i].UpdateSlot(slotItem.ItemData.ItemIconUI);

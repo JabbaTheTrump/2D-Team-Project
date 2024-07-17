@@ -8,6 +8,8 @@ public class Biomass : NetworkBehaviour, IInteractable
 {
     [field: SerializeField] public Item Sample { get; set; }
     public NetworkVariable<bool> IsInteractable { get; set; } = new(true);
+        public NetworkVariable<bool> BeingInteractedWith { get; set; } = new(false);
+    [field: SerializeField] public float InteractionTime { get; set; }
 
     [SerializeField] GameObject _harvesterPrefab;
 

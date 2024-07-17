@@ -12,6 +12,8 @@ public class DroppedItem : NetworkBehaviour, IInteractable
     [SerializeField] SpriteRenderer _spriteRenderer;
 
     public NetworkVariable<bool> IsInteractable { get; set; } = new(true);
+        public NetworkVariable<bool> BeingInteractedWith { get; set; } = new(false);
+    [field: SerializeField] public float InteractionTime { get; set; } = 0f;
 
     private void Start()
     {

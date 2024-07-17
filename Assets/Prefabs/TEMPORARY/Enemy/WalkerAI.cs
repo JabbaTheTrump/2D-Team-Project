@@ -295,6 +295,8 @@ public class WalkerAI : NetworkBehaviour
 
         RaycastHit2D raycastHit = Physics2D.Raycast(transform.position, direction, _detectionRadius); //Send a raycast to ensure the player is visible
 
+        if (playerTransform == null) return false; //A null check because for some reason stopping the game would produce an error in the next line
+
         if (raycastHit.transform.root != playerTransform) return false; //Checks if the raycast trasnform's ROOT is the player transform
 
         return true;

@@ -59,7 +59,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.7
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -68,9 +68,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 13.5
+  MaxDistance: 16
   Pan2D: 0
-  rolloffMode: 2
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -78,8 +78,8 @@ AudioSource:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.34666443
-      value: 1
+      time: 0.3113861
+      value: 0.9963074
       inSlope: -8.0032
       outSlope: -8.0032
       tangentMode: 0
@@ -87,8 +87,8 @@ AudioSource:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.4741974
-      value: 0.57406616
+      time: 0.43891907
+      value: 0.57037354
       inSlope: -2.0008
       outSlope: -2.0008
       tangentMode: 0
@@ -96,8 +96,8 @@ AudioSource:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.693985
-      value: 0.2796173
+      time: 0.65870667
+      value: 0.27592468
       inSlope: -0.94939196
       outSlope: -0.94939196
       tangentMode: 0
@@ -105,8 +105,8 @@ AudioSource:
       inWeight: 0
       outWeight: 0.32503602
     - serializedVersion: 3
-      time: 1
-      value: 0.0027770996
+      time: 0.9647217
+      value: 0
       inSlope: -0.12505
       outSlope: -0.12505
       tangentMode: 0
@@ -216,8 +216,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a3aaccfaa8ee2d4479ef09253005fde9, type: 3}
   - {fileID: 8300000, guid: 8f42676c07977cf4aa00a5de863d1347, type: 3}
   - {fileID: 8300000, guid: 449bd6b68b381af4289cc9be10507d3e, type: 3}
-  _minimumDelay: 10
-  _maximumDelay: 20
+  _minimumDelay: 25
+  _maximumDelay: 40
   _attackAudioDelay: 0.5
   _attackAudioClips:
   - {fileID: 8300000, guid: 40acd8ea7bc6ae44da4025b06047249c, type: 3}
@@ -277,7 +277,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.35
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -288,7 +288,7 @@ AudioSource:
   MinDistance: 1
   MaxDistance: 15
   Pan2D: 0
-  rolloffMode: 2
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0

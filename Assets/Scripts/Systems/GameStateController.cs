@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -13,6 +14,19 @@ public class GameStateController : ServerSingleton<GameStateController>
     public NetworkVariable<int> CurrentSampleCount { get; private set; } = new(0);
 
 
+    //Events
+    public event Action<GameOverEventArgs> OnGameOver;
+
+    public struct GameOverEventArgs
+    {
+        public bool IsVictory;
+    }
+
+    private void Start()
+    {
+        PlayerStateManager.Instance.OnPlayerStateListChange += CheckPlayersState;
+    }
+
     public void AddSample()
     {
         CurrentSampleCount.Value++;
@@ -23,8 +37,28 @@ public class GameStateController : ServerSingleton<GameStateController>
         }
     }
 
+    void CheckPlayersState(List<PlayerStateManager.PlayerStateEntry> playerStateList)
+    {
+        foreach (var entry in playerStateList)
+        {
+            if (entry.State == PlayerStateManager.PlayerState.Alive) return;
+        }
+
+        GameOverEventArgs eArgs = new GameOverEventArgs
+        {
+            IsVictory = false
+        };
+
+        OnGameOver?.Invoke(eArgs);
+    }
+
     void CompletedObjective()
     {
+        GameOverEventArgs eArgs = new GameOverEventArgs
+        { 
+            IsVictory = true 
+        };
 
+        OnGameOver?.Invoke(eArgs);
     }
 }

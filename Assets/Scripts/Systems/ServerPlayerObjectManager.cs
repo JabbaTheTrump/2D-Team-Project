@@ -25,6 +25,7 @@ public class ServerPlayerObjectManager : ServerSingleton<ServerPlayerObjectManag
         return true;
     }
 
+
     [Command]
     public void PrintPlayerObjectList() //DEBUG COMMAND
     {
