@@ -41,10 +41,10 @@ public class GameStateController : ServerSingleton<GameStateController>
     {
         foreach (var entry in playerStateList)
         {
-            if (entry.State == PlayerStateManager.PlayerState.Alive) return;
+            if (entry.State == PlayerStateManager.PlayerState.Spawned_Alive) return;
         }
 
-        GameOverEventArgs eArgs = new GameOverEventArgs
+        GameOverEventArgs eArgs = new()
         {
             IsVictory = false
         };
@@ -54,7 +54,7 @@ public class GameStateController : ServerSingleton<GameStateController>
 
     void CompletedObjective()
     {
-        GameOverEventArgs eArgs = new GameOverEventArgs
+        GameOverEventArgs eArgs = new()
         { 
             IsVictory = true 
         };

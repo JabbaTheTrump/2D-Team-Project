@@ -10,6 +10,7 @@ public class PlayerStateManager : ServerSingleton<PlayerStateManager>
 {
     [SerializeField] List<PlayerStateEntry> PlayerStateList;
 
+
     [System.Serializable]
     public struct PlayerStateEntry
     {
@@ -19,8 +20,9 @@ public class PlayerStateManager : ServerSingleton<PlayerStateManager>
 
     public enum PlayerState
     {
-        Alive,
-        Dead
+        NotSpawned,
+        Spawned_Alive,
+        Spawned_Dead
     }
 
     public event Action<List<PlayerStateEntry>> OnPlayerStateListChange;
@@ -39,11 +41,11 @@ public class PlayerStateManager : ServerSingleton<PlayerStateManager>
             new PlayerStateEntry
             {
                 PlayerId = id,
-                State = PlayerState.Alive
+                State = PlayerState.Spawned_Alive
             });
 
         NetworkObject playerObject = NetworkManager.SpawnManager.GetPlayerNetworkObject(id);
-        playerObject.GetComponent<HealthSystem>().OnDeath += () => ChangePlayerState(id, PlayerState.Dead);
+        playerObject.GetComponent<HealthSystem>().OnDeath += () => ChangePlayerState(id, PlayerState.Spawned_Dead);
     }
 
     void RemovePlayerEntry(ulong id)

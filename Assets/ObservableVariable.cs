@@ -6,12 +6,19 @@ public class ObservableVariable<T>
 {
     [SerializeField]
     private T _value;
-    [HideInInspector] public T Value
+
+    [HideInInspector]
+    public T Value
     {
         get { return _value; }
-
-        set {
-            if (!_value.Equals(value))
+        set
+        {
+            //if (_value == null)
+            //{
+            //    _value = value;
+            //    OnValueChanged?.Invoke(_value);
+            //}
+            if (!Equals(_value, value))
             {
                 _value = value;
                 OnValueChanged?.Invoke(_value);
@@ -24,5 +31,5 @@ public class ObservableVariable<T>
         _value = initialValue;
     }
 
-    public event Action<T> OnValueChanged;
+    public event Action<T> OnValueChanged; 
 }
