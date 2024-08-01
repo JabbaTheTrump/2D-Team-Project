@@ -304,9 +304,8 @@ public class WalkerAI : NetworkBehaviour
 
     NetworkObject[] GetPlayersWithinRadius(float maxRadius)
     {
-        NetworkObject[] playersWithinRadius = ServerPlayerObjectManager.Instance.PlayerObjects
-            .Where(pair => Vector2.Distance(pair.Value.transform.position, transform.position) <= maxRadius)
-            .Select(pair => pair.Value)
+        NetworkObject[] playersWithinRadius = PlayerStateManager.Instance.PlayerObjects
+            .Where(player => Vector2.Distance(player.transform.position, transform.position) <= maxRadius)
             .OrderBy(player => Vector2.Distance(player.transform.position, transform.position))
             .ToArray();
 

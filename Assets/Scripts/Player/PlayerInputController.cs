@@ -21,11 +21,6 @@ public class PlayerInputController : NetworkBehaviour
     private void Start()
     {
         _inventory = GetComponentInChildren<InventorySystem>();
-
-        if (IsLocalPlayer)
-        {
-            StartCoroutine(LocalPlayerSpawnController.Instance.InvokeLocalPlayerEventNextFrame(gameObject));
-        }
     }
 
     public override void OnNetworkSpawn()

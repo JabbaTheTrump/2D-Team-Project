@@ -4,34 +4,32 @@ using UnityEngine;
 using Unity.Netcode;
 using System;
 
-public class SceneManager : ServerSingleton<SceneManager>
+public class SceneManager : NetworkSingleton<SceneManager>
 {
-    //[SerializeField] GameObject _playerPrefab; //TEMPORARY - SPAWNING PLAYER ON THIS SCRIPT FOR DEBUG PURPOSES
+    public event Action<string> OnSceneFullyLoaded;
 
-    void Start()
-    {
-        //LobbyStateManager.Instance.CurrentState.OnValueChanged += LobbyStateChanged;
-        DontDestroyOnLoad(gameObject);
-    }
 
     public override void OnNetworkSpawn()
     {
-        base.OnNetworkDespawn();
+        base.OnNetworkSpawn();
         NetworkManager.Singleton.SceneManager.OnLoadComplete += SceneFinishedLoading;
+        LobbyStateManager.Instance.CurrentState.OnValueChanged += LobbyStateChanged;
+        DontDestroyOnLoad(gameObject);
     }
 
+    // IMPLEMENT THE PLAYER SPAWNING MECHANIC WITHIN THE SCENEFINISHEDLOADING METHOD!!!!!!
     private void SceneFinishedLoading(ulong clientId, string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
     {
-        Debug.Log("Load completed");
-    //    if (sceneName == "Game") //TEMPORARY
-    //    {
-    //        Debug.Log("Spawning player");
-    //        NetworkSpawnManager.Instance.SpawnPrefabOnNetwork(_playerPrefab, new(0,0));
-    //    }
-    //}
+        SceneFinishedLoadingClientRpc(clientId, sceneName);
+    }
 
     void LoadScene(string sceneName) 
     {
+        if (!IsServer)
+        {
+            Debug.LogWarning($"A non host player has attempted to load a scene using the scene manager! Player ID: {NetworkManager.LocalClientId}");
+        }
+
         var status = NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode: UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 
@@ -40,6 +38,16 @@ public class SceneManager : ServerSingleton<SceneManager>
         if (state == "InGame")
         {
             LoadScene("Game");
+        }
+    }
+
+    [ClientRpc]
+    void SceneFinishedLoadingClientRpc(ulong clientId, string sceneName)
+    {
+        if (clientId == NetworkManager.LocalClientId)
+        {
+            Debug.Log("Load completed");
+            OnSceneFullyLoaded?.Invoke(sceneName);
         }
     }
 }

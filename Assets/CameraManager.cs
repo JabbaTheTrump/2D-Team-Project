@@ -12,7 +12,7 @@ public class CameraManager : Singleton<CameraManager>
     // Start is called before the first frame update
     void Start()
     {
-        LocalPlayerSpawnController.Instance.OnLocalPlayerSpawn += SetCameraTarget;
+        LocalPlayerObjectManager.Instance.OnLocalPlayerSpawned += SetCameraTarget;
     }
 
     void SetCameraTarget(GameObject target)

@@ -12,7 +12,7 @@ public class MonitorDisplayManager : NetworkBehaviour //Sets the in-game display
     // Start is called before the first frame update
     void Start()
     {
-        LocalPlayerSpawnController.Instance.OnLocalPlayerSpawn += (_) => Initialize();
+        LocalPlayerObjectManager.Instance.OnLocalPlayerSpawned += (_) => Initialize();
     }
 
     private void Initialize()

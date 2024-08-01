@@ -19,7 +19,7 @@ public class FieldOfView : MonoBehaviour
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        LocalPlayerSpawnController.Instance.OnLocalPlayerSpawn += SetPlayer;
+        LocalPlayerObjectManager.Instance.OnLocalPlayerSpawned += SetPlayer;
     }
 
     void SetPlayer(GameObject playerObject)

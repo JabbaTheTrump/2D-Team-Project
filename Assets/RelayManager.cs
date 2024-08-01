@@ -13,11 +13,6 @@ using Unity.Services.Lobbies.Models;
 
 public class RelayManager : ServerSingleton<RelayManager>
 {
-    private void Start()
-    {
-
-    }
-
     public async Task<string> StartHostWithRelay(int maxConnections = 5)
     {
         try

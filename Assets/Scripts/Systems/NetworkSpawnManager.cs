@@ -26,6 +26,12 @@ public class NetworkSpawnManager : ServerSingleton<NetworkSpawnManager>
         return netObject;
     }
 
+    public void SpawnPlayerObjectOnNetwork(GameObject playerPrefab, ulong clientId, Vector2 position)
+    {
+        GameObject playerObj = Instantiate(playerPrefab, position, Quaternion.identity);
+        playerObj.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+    }
+
     public void DespawnObjectOnNetwork(NetworkObject netObject)
     {
         if (netObject == null)

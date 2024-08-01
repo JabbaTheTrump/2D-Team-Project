@@ -10,7 +10,7 @@ public class CursorSpriteManager : Singleton<CursorSpriteManager>
     // Start is called before the first frame update
     void Start()
     {
-        LocalPlayerSpawnController.Instance.OnLocalPlayerSpawn += LocalPlayerSpawned;
+        LocalPlayerObjectManager.Instance.OnLocalPlayerSpawned += LocalPlayerSpawned;
     }
 
     void LocalPlayerSpawned(GameObject playerObject)

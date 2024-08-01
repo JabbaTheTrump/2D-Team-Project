@@ -9,7 +9,7 @@ using System;
 public class PlayerStateManager : ServerSingleton<PlayerStateManager>
 {
     [SerializeField] List<PlayerStateEntry> PlayerStateList;
-
+    public List<NetworkObject> PlayerObjects = new(); //TEMPORARY 
 
     [System.Serializable]
     public struct PlayerStateEntry

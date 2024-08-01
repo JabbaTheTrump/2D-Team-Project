@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using Unity.IO.LowLevel.Unsafe;
+using Unity.Netcode;
 using UnityEngine;
 
 public class Singleton<T> : MonoBehaviour where T : Singleton<T>
@@ -23,8 +24,9 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T>
 public class NetworkSingleton<T> : NetworkBehaviour where T : NetworkSingleton<T>
 {
     public static T Instance;
-
-    private void Awake()
+    
+    
+    virtual protected void Awake()
     {
         if (Instance != null && Instance != this)
         {

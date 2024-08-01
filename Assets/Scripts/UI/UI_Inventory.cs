@@ -15,7 +15,7 @@ public class UI_Inventory : MonoBehaviour
 
     void Start()
     {
-        LocalPlayerSpawnController.Instance.OnLocalPlayerSpawn += InitializeInventoryUI;
+        LocalPlayerObjectManager.Instance.OnLocalPlayerSpawned += InitializeInventoryUI;
     }
 
     void InitializeInventoryUI(GameObject playerObject)

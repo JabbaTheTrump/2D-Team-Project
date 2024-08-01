@@ -13,7 +13,7 @@ public class UI_StaminaDisplay : MonoBehaviour
     void Start()
     {
         SetImageAlpha(0);
-        LocalPlayerSpawnController.Instance.OnLocalPlayerSpawn += Initialize;
+        LocalPlayerObjectManager.Instance.OnLocalPlayerSpawned += Initialize;
     }
 
     private void Initialize(GameObject player)

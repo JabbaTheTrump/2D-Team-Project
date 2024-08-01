@@ -14,7 +14,7 @@ public class UI_HealthSlider : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        LocalPlayerSpawnController.Instance.OnLocalPlayerSpawn += Initialize;
+        LocalPlayerObjectManager.Instance.OnLocalPlayerSpawned += Initialize;
     }
 
     private void Initialize(GameObject playerObj)
